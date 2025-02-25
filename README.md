@@ -1,10 +1,16 @@
-# FIA_OWN_MAP
+FIA_OWN_MAP
+This repository contains code for processing and functions related to generating the FIA Ownership map. It includes flowcharts, preprocessing steps, and analytical scripts to support the map creation process.
 
-This repo contains code relevant to the processing and functions related to the FIA Ownership map generation. The files pertain to flowcharts, preprocessing, and analytical scripts to that end.
+Updated: The scripts will be synced with the UMass OneDrive for easier access and execution. All directory paths are configured to match the OneDrive file structure.
 
-Updated: This script will be synced to push to the Umass OneDrive to be viewed and run there. All directory paths will be written to reflect the OneDrive file structure.
+Processing Environment: The script is designed to run on a configured AWS EC2 instance with 256 GB of RAM.
 
-Overall work flow:
-1. Run **Arc_Processing.ipynb**. This script will unpack the DMP ESRI geodatabase and do initial processing. *This only needs to be done when a new delivery of geodatabase files is available*. This script will require access to the arcpy library. It will need to be run in a python environmnet licensed with ESRI products. 
-2. Run **Random_Forest_Classifier_Traning_Script**. This script creates and generates a model able to classify ownership names, based on a training list derived from manual classification of DMP names for NWOS implementation. The training list contains confidential data and so must remain on an external flashdrive, but the derived model object is copied to the OUTPUTS/INTERMEDIATE folder. This script only needs to be run if a new training set becomes available. Otherwise, the 'classify_unknown_ownership_model.pkl' is the authoritative model originally derived from this script.
-3. Run **Main.ipynb**. This script calls all the other scripts in the process, cycles through all of the states available in the INPUTS folder, and outputs the final spatial layers and tables. Only states thatr do not already appear in the outputs folder are passed throught he script. 
+Overall Workflow:
+Main Script: Orchestrates the execution of the entire algorithm.
+Random_Forest_Classifier_Training_Script: Generates a model for classifying ownership names based on a training list derived from manually classified DMP names for the NWOS implementation. This training list contains confidential data, so it must be stored on an external flash drive. This script only needs to be run when a new training set is available. Otherwise, the classify_unknown_ownership_model.pkl file, which is the authoritative model, should be used.
+Preprocessing Script: Handles basic layer joins, including Parcel data, county data, PAD data, Indigenous lands data, and land cover data. It also calculates key descriptors such as parcel areas, centroids, and summarizes land cover information within each parcel.
+Classify_Unknowns Script: Applies hierarchical and machine learning classification techniques. Ownership names are first analyzed for structural components, followed by keyword searches to classify them. Remaining unknown ownerships are then classified using the random forest model created earlier.
+Name_Matching Script: Aggregates ownership records for individuals who own multiple parcels across the state. Due to non-standardized reporting from county offices, ownership data may differ slightly for the same individual (e.g., "V. Harris" vs. "Vance Harris"). This script matches and consolidates such variations using phonetic algorithms to reduce the number of unique ownership records.
+Summary Script: Calculates summary statistics for the forested parcels and the various ownership classes.
+New_Map_Data Script: Converts the calculated tabular information into a new raster that represents the data in a continuous spatial format.
+NoData Overlay: Due to the nature of the sourced parcel data, some raster cells may contain NoData values. This final overlay fills in these gaps with Public Ownership data from the PAD layer and Indigenous Lands data from the Indigenous_Lands_BIA_AIAN_National_LAR layer.
