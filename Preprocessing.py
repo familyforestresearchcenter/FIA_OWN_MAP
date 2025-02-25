@@ -19,6 +19,8 @@ import numpy as np
 import gc
 from geopandas import GeoSeries
 from configs import *
+import xarray
+
 
 def polygonsToRaster(poly):
     polygons = poly
@@ -75,8 +77,7 @@ def fillFlag(x):
         return 0
     else:
         return x['IL_Flag']
-
-
+    
 def getXY(pt):
     return (pt.x, pt.y)
 
@@ -99,6 +100,17 @@ if __name__ == '__main__':
     parcels['Value'] = range(0,len(parcels))
 
     new_parcels = polygonsToRaster(parcels)
+
+    # os.mkdir(OUTPUT_DIR + state_name)
+    try:
+        os.mkdir(DATA_DIR + State_name)
+    except:
+        pass
+    
+# #     change data type for file
+#     xarray.DataArray(new_parcels.to_array().values.astype('int_')[0], coords={'latitude': new_parcels['y'].values, 'longitude': new_parcels['x'].values},
+#         dims=['latitude', 'longitude']).rio.to_raster(f'{DATA_DIR}{State_name}/{State_name}_Join_ID.tif', dtype=np.uint64, tiled=True, windowed=True, compress='zstd')
+    
     
     print('Step2: polygon to raster, complete')
        
@@ -181,14 +193,54 @@ if __name__ == '__main__':
     
     counties=gpd.read_file(INPUT_DIR + 'tl_2020_us_county/tl_2020_us_county.shp')
     counties = counties.to_crs(4269)
-    
-    gdf = gpd.sjoin(parcels, counties, how="inner", op='within')
+
+
+    parcels = parcels.to_crs(5070)
+    Parcel_Centroid = GeoSeries(parcels['geometry']).centroid
+    x,y = [list(t) for t in zip(*map(getXY, Parcel_Centroid))]
+    parcels['Centroid'] = Parcel_Centroid
+    parcels['Centroid_X'] = x
+    parcels['Centroid_Y'] = y
+    parcels["PARCEL_AREA"] = parcels['geometry'].area/ 10**6
+
+    print("Step7: Parcel Geometric area amd centroids, complete")
+
+
+    counties = counties[['COUNTYFP', 'NAME', 'geometry']]
+
+    parcels = parcels.set_geometry('Centroid')
+    parcels = parcels.to_crs(4269)
+
+    gdf = gpd.sjoin(parcels, counties, how="left", predicate='within')
+
+    gdf = gdf.set_geometry('geometry')
+    gdf = gdf.to_crs(4269)
+    gdf = gdf.drop(['index_right'], axis = 1)
+
     gdf = gdf.rename(columns={'NAME': 'COUNTY_NAME', 'COUNTYFP' : 'COUNTY_FIPS'})
-    polygon = gdf.drop(['index_right', 'STATEFP', 'COUNTYNS', 'GEOID', 'NAMELSAD', 'LSAD', 'CLASSFP', 'MTFCC', 'CSAFP', 'CBSAFP',
-                'METDIVFP', 'FUNCSTAT', 'ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON'], axis = 1)
+
+    for idx in gdf.loc[pd.isnull(gdf.COUNTY_NAME)].index:
+        temp = gdf.loc[gdf.index == idx]
+        temp_join = gpd.sjoin(temp, counties, how="left", predicate='intersects')
+    # this is grabbing the first intersection
+        county_name = temp_join.NAME.values[0]
+        county_fip = temp_join.COUNTYFP	.values[0]
+        gdf.at[idx, 'COUNTY_NAME'] = county_name
+        gdf.at[idx, 'COUNTY_FIPS'] = county_fip
+
+    polygon = gdf
+
+# #     is within the correct choice here?
+#     print('parcels: ', len(parcels))
+#     gdf = gpd.sjoin(parcels, counties, how="inner", op='within')
+#     print('gdf1: ', len(gdf))
+#     gdf = gdf.rename(columns={'NAME': 'COUNTY_NAME', 'COUNTYFP' : 'COUNTY_FIPS'})
+#     polygon = gdf.drop(['index_right', 'STATEFP', 'COUNTYNS', 'GEOID', 'NAMELSAD', 'LSAD', 'CLASSFP', 'MTFCC', 'CSAFP', 'CBSAFP',
+#                 'METDIVFP', 'FUNCSTAT', 'ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON'], axis = 1)
     
+#     print('polygon1: ', len(polygon))
     
-    print('Step7: county infor written over, complete')
+    print('Step8: County information written over, complete')
     
     
     #Format the indigenous lands data
@@ -198,21 +250,82 @@ if __name__ == '__main__':
     ILs = ILs.to_crs(4269)
     
     #join the parcels with indigenous lands
-    polygon = gpd.sjoin(polygon, ILs, how="left", op='intersects')
+
+    polygon = polygon.set_geometry('Centroid')
+    polygon = gpd.sjoin(polygon, ILs, how="left", predicate='within')
+
+#     polygon = gpd.sjoin(polygon, ILs, how="left", op='intersects')
     polygon['IL_Flag'] = polygon.apply(lambda x: fillFlag(x), axis = 1)
+
+
+# some centroids overlap 2 indigenous nations
+    polygon = polygon.drop_duplicates(subset=['PRCLDMPID'], keep='first')
+
+
+    print('Step9: ILs flagged, complete')
     
-    print('Step8: ILs flagged, complete')
+
+#     join the PADUS government overlay
+    # pad = gpd.read_file(INPUT_DIR + "PADUS4_0_Geodatabase.gdb", driver='FileGDB', layer='PADUS4_0Combined_Proclamation_Marine_Fee_Designation_Easement')
+    pad = gpd.read_file(INPUT_DIR + "PAD_US_Combined.shp")
+    pad = pad.to_crs(4269)
+
+    loc = pad.loc[pad.INC_Field == 25]
+    loc['GOV_Flag'] = 2 
+
+    stat = pad.loc[pad.INC_Field == 31]
+    stat['GOV_Flag'] = 3 
+
+    fed = pad.loc[pad.INC_Field == 32]
+    fed['GOV_Flag'] = 4 
+
+    # des = pad.loc[pad.Own_Type == 'DESG']
+    # loc2 = des.loc[des.Mang_Type == 'LOC']
+    # loc2['GOV_Flag'] = 5
+
+    # stat2 = des.loc[des.Mang_Type == 'STAT']
+    # stat2['GOV_Flag'] = 6
+
+    # fed2 = des.loc[des.Mang_Type == 'FED']
+    # fed2['GOV_Flag'] = 7
+
+    pad = pd.concat([loc, stat, fed])
+
+
+    # pad = pd.concat([loc, stat, fed, loc2, stat2, fed2])
+
+    pad = pad[['GOV_Flag', "geometry"]]
+
+    def gov_fill(x):
+        if x.IL_Flag == 1:
+            return x.IL_Flag
+        else:
+            return x.GOV_Flag
+
+    polygon = polygon.set_geometry('Centroid')
+
+    polygon = gpd.sjoin(polygon.drop(columns=['index_right']), pad, how="left", predicate='within')
+    polygon['IL_Flag'] = polygon.apply(lambda x: gov_fill(x), axis = 1)
+    print('polygon3: ', len(polygon))
+
+    del pad, loc, stat, fed
+
+    print('Step9: Government PAD LAyer joined, complete')
+
+    polygon = polygon.set_geometry('geometry')
+
+
+    # polygon = polygon.to_crs(5070)
+    # Parcel_Centroid = GeoSeries(polygon['geometry']).centroid
+    # x,y = [list(t) for t in zip(*map(getXY, Parcel_Centroid))]
+    # polygon['Centroid_X'] = x
+    # polygon['Centroid_Y'] = y
+    # polygon["PARCEL_AREA"] = polygon['geometry'].area/ 10**6
+    # print('polygon4: ', len(polygon))
     
     
-    polygon = polygon.to_crs(5070)
-    Parcel_Centroid = GeoSeries(polygon['geometry']).centroid
-    x,y = [list(t) for t in zip(*map(getXY, Parcel_Centroid))]
-    polygon['Centroid_X'] = x
-    polygon['Centroid_Y'] = y
-    polygon["PARCEL_AREA"] = polygon['geometry'].area/ 10**6
     
-    
-    print('Step9: parcel areas calculated, complete')
+    # print('Step10: parcel areas calculated, complete')
     
     
     #DMP points data had duplicates that were propogating errors throughout the whole join process
@@ -222,10 +335,15 @@ if __name__ == '__main__':
                      'MPREDIR', 'MSTNAME', 
                      'MMODE', 'PRCLDMPID']]
     points = points.drop_duplicates(['PRCLDMPID'], keep='first')
+    
+    
+    print('polygon_pre_join: ', len(polygon))
 
 
     #there left table has to be a gdf and the right df HAS to be a simple df to result in a gdf
     state = polygon.merge(pd.DataFrame(points), on='PRCLDMPID', how= 'left')
+    print('state1: ', len(state))
+
     # state = polygon.merge(pd.DataFrame(points.drop(columns='geometry')), on='PRCLDMPID', how= 'left')
     state = pd.DataFrame(state.drop(columns='geometry'))
     
@@ -233,7 +351,9 @@ if __name__ == '__main__':
     gc.collect()
     
     full_state = pd.merge(state, df, on='Value', how='left')
+    print('full_state1: ', len(full_state))
     
+
     col_name = {
         0:'Unclassified',
         1: 'Open Water', 
