@@ -3,6 +3,8 @@
 
 import os
 import sys
+import gc
+
 
 sys.path.insert(0, os.path.abspath('.'))
 
@@ -54,6 +56,74 @@ if __name__ == "__main__":
     
     IL['Own_Type'] = 44
     table = pd.concat([IL, not_IL])
+
+
+# Check against unknown ownerships first. PAD only to fill in unknowns
+
+    loc =  table.loc[table['IL_Flag'] == 2]
+    not_loc =  table.loc[table['IL_Flag'] != 2]
+
+    loc_unk = loc.loc[loc['Own_Type'] == -99]
+    loc_k = loc.loc[loc['Own_Type'] != -99]
+
+    loc_unk['Own_Type'] = 25
+    table = pd.concat([loc, not_loc, loc_k, loc_unk])
+
+    stat =  table.loc[table['IL_Flag'] == 3]
+    not_stat =  table.loc[table['IL_Flag'] != 3]
+
+    stat_unk = stat.loc[stat['Own_Type'] == -99]
+    stat_k = stat.loc[stat['Own_Type'] != -99]
+    
+    stat_unk['Own_Type'] = 31
+    table = pd.concat([stat, not_stat, stat_k, stat_unk])
+
+    fed =  table.loc[table['IL_Flag'] == 4]
+    not_fed =  table.loc[table['IL_Flag'] != 4]
+
+    fed_unk = fed.loc[fed['Own_Type'] == -99]
+    fed_k = fed.loc[fed['Own_Type'] != -99]
+    
+    fed_unk['Own_Type'] = 32
+    table = pd.concat([fed, not_fed, fed_k, fed_unk])
+
+    loc2 =  table.loc[table['IL_Flag'] == 5]
+    not_loc2 =  table.loc[table['IL_Flag'] != 5]
+    
+    loc2_unk = loc2.loc[loc2['Own_Type'] == -99]
+    loc2_k = loc2.loc[loc2['Own_Type'] != -99]
+
+    loc2_unk['Own_Type'] = 25
+    table = pd.concat([loc2, not_loc2, loc2_k, loc2_unk])
+
+    stat2 =  table.loc[table['IL_Flag'] == 6]
+    not_stat2 =  table.loc[table['IL_Flag'] != 6]
+
+    stat2_unk = stat2.loc[stat2['Own_Type'] == -99]
+    stat2_k = stat2.loc[stat2['Own_Type'] != -99]
+    
+    stat2_unk['Own_Type'] = 31
+    table = pd.concat([stat2, not_stat2, stat2_k, stat2_unk])
+
+    fed2 =  table.loc[table['IL_Flag'] == 7]
+    not_fed2 =  table.loc[table['IL_Flag'] != 7]
+
+    fed2_unk = fed2.loc[fed2['Own_Type'] == -99]
+    fed2_k = fed2.loc[fed2['Own_Type'] != -99]
+    
+    fed2_unk['Own_Type'] = 32
+    table = pd.concat([fed2, not_fed2, fed2_k, fed2_unk])
+
+    del IL, loc, stat, fed, 
+    not_fed, not_IL, not_loc, not_stat, 
+    loc2, not_loc2, 
+    stat2, not_stat2, 
+    fed2, not_fed2, 
+    loc2_k, loc2_unk,
+    stat2_k, stat2_unk, 
+    fed2_k, fed2_unk
+    
+    gc.collect()
 
     table['Forest_Total'] = table.apply(lambda x: dileneate_forests(x), axis=1)
 
@@ -120,13 +190,16 @@ if __name__ == "__main__":
 
     table = table.rename(columns=new_columns)
 
-    # os.mkdir(OUTPUT_DIR + state_name)
-    try:
-        os.mkdir(DATA_DIR + state_name)
-    except:
-        pass
+    # # os.mkdir(OUTPUT_DIR + state_name)
+    # try:
+    #     os.mkdir(DATA_DIR + state_name)
+    # except:
+    #     pass
 
     #table.to_csv(OUTPUT_DIR + state_name + '/DELAWARE_PARCELS_FULL.csv')
+
+    os.remove(f'./data/Full_Data_Table.csv')
+
     table.to_csv(DATA_DIR + state_name + "//"+ state_name+'_Full_Data_Table.csv')
     
     table['JOIN_INDEX'] = table['Value'].astype(int)
