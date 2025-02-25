@@ -19,6 +19,8 @@ import shutil
 from zipfile import ZipFile
 import aspose.words as aw
 import tarfile
+import pickle
+import numpy_indexed as npi
 
 
 def polygonsToRaster(poly):
@@ -144,20 +146,20 @@ if __name__ == '__main__':
     del OWNCD_array, clipped_NLCD, df
     gc.collect()
 
-    # map_codes = recode_map(coded_ar)
-    # map_codes = map_codes = map_codes.astype('u1')
-    
+    with open(INPUT_DIR + "New_Raster_Reclass.pickle", 'rb') as handle:
+        new_recode = pickle.load(handle)
+
+    new_array = np.zeros(coded_ar.shape, dtype = np.uint8)
+    for r in tqdm(range(len(coded_ar))):
+        new_array[r] = npi.remap(coded_ar[r].flatten(), list(new_recode.keys()), list(new_recode.values())).reshape(coded_ar[r].shape)
+    new_array[new_array == 32767] = 0
 
     # # #Full_Code_tiff
-    xarray.DataArray(coded_ar, coords={'latitude': new_parcels['y'].values, 'longitude': new_parcels['x'].values},
-                dims=['latitude', 'longitude']).rio.to_raster(f'{DATA_DIR}{State_name}/{State_name}_Own_Type_by_Landcover_Full.tif', dtype=np.int16, tiled=True, windowed=True, compress='zstd')
+    # xarray.DataArray(coded_ar, coords={'latitude': new_parcels['y'].values, 'longitude': new_parcels['x'].values},
+    #             dims=['latitude', 'longitude']).rio.to_raster(f'{DATA_DIR}{State_name}/{State_name}_Own_Type_by_Landcover_Full.tif', dtype=np.int16, tiled=True, windowed=True, compress='zstd')
     
-    # tar = tarfile.open(fname + "{State_name}_Own_Type_by_Landcover_Full.tif.tar.gz", 'w:qz')
-    # tar.addfile(tarfile.TarInfo("/home/user/file.txt"), "/home/user/file.txt")
-    # tar.close()
+    xarray.DataArray(new_array, coords={'latitude': new_parcels['y'].values, 'longitude': new_parcels['x'].values},
+                dims=['latitude', 'longitude']).rio.to_raster(f'{DATA_DIR}{State_name}/{State_name}_Own_Type_by_Landcover_Encoded.tif', dtype=np.uint8, tiled=True, windowed=True, compress='zstd')
     
-    # #Map_ready_tiff
-    # xarray.DataArray(map_codes, coords={'latitude': new_parcels['y'].values, 'longitude': new_parcels['x'].values},
-    #             dims=['latitude', 'longitude']).rio.to_raster(f'{DATA_DIR}{State_name}/{State_name}_Own_Type_by_Landcover_Map.tif', dtype=np.int16,  tiled=True, windowed=True, compress='zstd')
-    
+
     print("Map Tif Created")
