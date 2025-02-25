@@ -390,6 +390,8 @@ if __name__ == '__main__':
     # if 'Meta_names' in final_table.columns:
     #     final_table.drop(columns='Meta_names', axis=1, inplace=True)
 
+    os.remove(f'./data/new_parallel_state_temp.csv')
+
     # write to files
     final_table.to_csv(DATA_DIR + output_name_matching)
 
