@@ -112,61 +112,41 @@ NamesExpander = pd.read_csv(f'{DATA_DIR}Common_Name_Abbreviations.csv',
 biz_word_drop = [' CORP', ' LLC', ' INC', ' LTD', ' HRS', 'MGT', ' OF ', ' CO ',
                  ' LP', ' MGMT', ' STE ', ' L L C', ' L P', 'Holdings', 'Partners']
 
-# # Configs for Classify_Unknowns_Application
+reclass_dict = {
+#     Unclassified
+        0: -99,
+#     'Open Water'
+        11:  1,
+#     'Developed, Open Space'
+        21: 2,
+#     'Developed, Low Intensity'
+        22: 3,
+#     'Developed, Medium Intensity'
+        23: 4,
+#     'Developed, High Intensity'
+        24: 5,
+#     'Barren Land'
+        31: 6,
+#     'Deciduous Forest'
+        41: 7,
+#     'Evergreen Forest'
+        42: 8,
+#     'Mixed Forest'
+        43: 9,
+#     'Shrub/Scrub'
+        52: 11,
+#     'Herbaceuous'
+        71: 12,
+#     'Hay/Pasture'
+        81: 13,
+#     'Cultivated Crops'
+        82: 14,
+#     'Woody Wetlands'
+        90: 15,
+#     'Emergent Herbaceuous Wetlands'
+        95: 16
+    }
 
-# # # Trusts keywords
-# trust_kw = [' trust ', ' rev tr of ']
-
-# # # corporate keyword in Classify Unknown
-# corp_keywords = [' BANK ', 'CORPORATION', 'PARTICIPATION', 'PROPERTIES',
-#                  'ASSOCIATIONS', 'ASSOCIATES', ' ASSOCI', 'MAINTENANCE',
-#                  'MAINTENANC', 'TELEPHONE', 'ELECTRIC', 'ENTERPRISES',
-#                  'ENTERPRISE', 'AUTHORITY', 'HOMEOWNERS', 'INTERNATIONAL',
-#                  ' OFFICE', 'INVESTMENT', ' MGMT', ' INN', 'ASSOCIATION',
-#                  'ACCOUNTING', 'MAINTEN', 'PRODUCT', 'MUTUAL', ' ESTATES',
-#                  ' & SONS', 'FINANCE', ' TITLE', 'WIRELESS', 'COMMUNICATION',
-#                  ' SERVICE', 'BAR & GRILL', ' DEPT', ' CTR', ' LOAN',
-#                  'SPECIALTIES', 'BRANDS', ' UNITEDCREDIT', ' UNION',
-#                  'CORPORATE', 'TREASURER', ' ADMIN', 'UTILITIES',
-#                  'COMMERCIAL', ' STORAGE', 'REAL ESTATE', 'CREDIT UNION',
-#                  'AND SONS']
-
-# # # government keyword in Classify Unknown
-# government_keywords = [' state ', ' county ', ' federal ', ' government ',
-#                        ' city of ', ' town of ', ' township ', ' department ',
-#                        ' bureau ']
-
-# # # additional check for government keyword in Classify Unknown [gov does not
-# # # contain these keywords]
-# government_keywords_plus = [' BANK ', ' CORP', 'PARTICIPATION', ' TRUST',
-#                             ' TRUS', ' CO ', ' LP ', 'UNIVERSITY', 'COLLEGE',
-#                             ' CHURCH', ' CLUB', 'BAPTIST', 'EVANGELICAL',
-#                             'METHODIST', 'CATHOLIC', 'PROPERTIES',
-#                             'ASSOCIATIONS', 'ASSOCIATES', ' ASSOCI',
-#                             'SOCIETY', 'MAINTENANCE', 'MAINTENANC',
-#                             'ENTERPRISES', 'ENTERPRISE', 'AUTHORITY',
-#                             'HOMEOWNERS', 'INTERNATIONAL', 'INVESTMENT',
-#                             ' HOME', ' MGMT', ' PRESBYTERIAN', ' INN',
-#                             'ASSOCIATION', ' STE ', 'ACCOUNTING', 'MAINTEN',
-#                             'PRODUCT', 'MUTUAL', 'ESTATES', 'PARTNER',
-#                             ' & SONS', 'FINANCE', ' TITLE', ' L P ',
-#                             ' FARM', 'WIRELESS', 'COMMUNICATION',
-#                             ' SERVICE', 'BAR & GRILL', ' CTR ', ' LOAN',
-#                             'SPECIALTIES', 'BRANDS', 'CREDIT', 'CORPORATE',
-#                             'TREASURER', ' ADMIN', 'UTILITIES', 'COMMERCIAL',
-#                             ' STORAGE', 'FAMILY']
-
-# # # Religious keyword in Classify Unknown
-# rel_key_words = [' Adventist ', ' Baptist ', ' Brethren ', ' Catholic ',
-#                  'Christian Church', ' Church of ', ' Episcopal ', ' Anglican ',
-#                  ' Lutheran ', ' Mennonite ', ' Methodist ', ' Moravian ',
-#                  'Mormon ', ' Nazarene ', ' Orthodox ', 'Pentecostal ',
-#                  ' Presbyterian ', ' Reformed Church ', 'Spiritualist ',
-#                  ' Mosques ', ' Islamic Center ', ' Mosque ', ' Masjid ',
-#                  ' Synagogues ', ' Temple ', ' Congregation ', ' of bethlehem ',
-#                  'kingdom of god', 'christian*church']
-
-# us_state
 us_state_to_abbrev = {
     "Alabama": "AL",
     "Alaska": "AK",
@@ -225,7 +205,7 @@ us_state_to_abbrev = {
     "Puerto Rico": "PR",
     "United States Minor Outlying Islands": "UM",
     "U.S. Virgin Islands": "VI",
-    "South"
+
     # "FAKE": "FAKE"
     # "NH" : "NH",
     # "CH" : "CH",
