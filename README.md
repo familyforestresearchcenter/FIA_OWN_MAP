@@ -1,124 +1,100 @@
+# FIA_OWN_MAP
 
-FIA_OWN_MAP
-This repository contains a set of Python scripts for generating the FIA Ownership Map, a spatial dataset that combines parcel-level ownership data, land cover information, and overlays from public land datasets. The repository provides a full data-processing pipeline, from raw parcel data to a final raster product and summary tables.
+This repository contains Python scripts for processing and generating the **FIA Ownership Map**, a spatial dataset combining parcel-level ownership data, land cover information, and overlays from public land datasets. The pipeline integrates preprocessing, ownership classification, name matching, and rasterization steps to create a final, encoded raster product along with detailed tabular outputs.
 
-Key Features
-Automated Preprocessing: Integrates parcel polygons with land cover data, county boundaries, and Indigenous Lands.
+---
 
-Ownership Classification: Uses both rule-based keyword detection and a trained Random Forest model to classify ownership types.
+## Key Features
+- **Automated Preprocessing:** Integrates parcel polygons with land cover, county boundaries, PADUS data, and Indigenous Lands.
+- **Ownership Classification:** Uses rule-based keyword detection and a pre-trained **Random Forest model** to classify ownership types.
+- **Name Matching:** Consolidates ownership records using **phonetic algorithms (Double Metaphone)** to unify variations in owner names.
+- **Raster Generation:** Produces a raster encoding both ownership classes and NLCD land cover data.
+- **Overlay Adjustments:** Applies PADUS (Protected Areas Database of the U.S.) and Indigenous Lands overlays to fill or refine classifications.
 
-Name Matching: Consolidates ownership records using phonetic matching (Double Metaphone) to unify slight variations in owner names.
+---
 
-Raster Generation: Produces a final encoded raster combining ownership classes and NLCD land cover data.
+## Processing Environment
+- **Hardware Requirements:** Optimized for an **AWS EC2 instance with 256 GB RAM** due to large geospatial datasets.
+- **File System:** Paths are configured to match the **UMass OneDrive** directory structure for synchronized data and scripts.
+- **Dependencies:** Python 3.9+ with libraries such as:
+  - `geopandas`, `rasterio`, `xarray`, `rioxarray`
+  - `numpy`, `pandas`, `tqdm`, `shapely`
+  - `scikit-learn`, `metaphone`
+  - `numpy_indexed`, `geocube`
 
-Overlay Corrections: Applies PADUS (Protected Areas Database of the U.S.) and Indigenous Lands overlays to fill in missing or misclassified areas.
+---
 
-Processing Environment
-Recommended Hardware: The pipeline is optimized for a 256 GB RAM AWS EC2 instance due to the size of the geospatial datasets.
+## Overall Workflow
 
-File System: Paths are configured to match the UMass OneDrive directory structure for data synchronization and ease of execution.
+### **Main Script (`Main.py`)**
+`Main.py` orchestrates the full pipeline. It sequentially runs all modules, cleans up intermediate files, and packages final outputs into a `{STATE}.zip` file containing:
+- `{STATE}_Full_Data_Table.csv`
+- `{STATE}_Final_Encoded.tif`
+- `{STATE}_Parcel_IDs.json`
 
-Dependencies: Requires Python 3.9+ with libraries including geopandas, rasterio, xarray, scikit-learn, numpy, pandas, and others.
+---
 
-Overall Workflow
-Main Script (Main.py)
-Orchestrates the execution of all pipeline steps.
+### **Step-by-Step Modules**
 
-Cleans up intermediate files and packages final outputs into a {STATE}.zip file containing:
+#### **1. Preprocessing (`Preprocessing_opt.py`)**
+- Reads parcel data from a `.gdb` file.
+- Converts parcels to raster.
+- Clips **NLCD 10m raster** to parcel extent.
+- Calculates **land cover proportions** for each parcel.
+- Joins **county boundaries** and **Indigenous Lands (ILs)**.
+- Computes parcel descriptors: centroid coordinates and area.
+- **Outputs:**
+  - `temp.csv` – Parcel data with land cover stats and county info.
+  - `{STATE}_Parcel_IDs.json` – GeoJSON of parcel geometries and IDs.
 
-{STATE}_Full_Data_Table.csv
+#### **2. Ownership Classification (`Classify_Unknowns_opt.py`)**
+- Normalizes and cleans ownership names (`OWN1`, `OWN2`).
+- **Keyword classification:** Detects Federal, State, Local government, corporate, religious, trust, and family ownerships.
+- **Machine learning classification:** Remaining unknowns are classified using a **Random Forest model** (`classify_unknown_ownership_model.pkl`) trained on manually labeled NWOS data.
+- **Outputs:**
+  - `new_classified_state_temp.csv` – Ownership classifications.
 
-{STATE}_Final_Encoded.tif
+#### **3. Name Matching (`Name_Matching_opt.py`)**
+- Groups parcels by ownership using:
+  - **Double Metaphone** phonetic encoding.
+  - Address-based grouping to resolve variations.
+- Assigns a **`Unq_ID`** (unique ownership identifier).
+- **Outputs:**
+  - `Full_Data_Table.csv` – Consolidated ownership records with parcel counts.
 
-{STATE}_Parcel_IDs.json
+#### **4. Summary (`Summary_Script_opt.py`)**
+- Calculates:
+  - **Forest area per parcel (acres).**
+  - **Forest parcel counts per owner.**
+- Aggregates total forested area and parcel statistics by ownership ID.
+- Standardizes column names to FIA codes (e.g., `OWNCD`, `NLCD_41_PROP`).
+- **Outputs:**
+  - Updated `Full_Data_Table.csv` with forest metrics.
 
-Step-by-Step Modules
-1. Preprocessing (Preprocessing_opt.py)
-Reads parcel data from .gdb files and converts polygons to raster.
+#### **5. Map Data Encoding (`Map_Data_opt.py`)**
+- Joins ownership codes (`OWNCD`) to parcels.
+- Combines ownership codes and NLCD data into an **encoded raster**.
+- Applies a **reclassification dictionary** (`New_Raster_Reclass.pickle`).
+- **Outputs:**
+  - `Own_Type_by_Landcover_Encoded.tif`.
 
-Clips NLCD 10m raster to the parcel extent.
+#### **6. Final Overlay (`Last_Overlay_opt.py`)**
+- Applies **PADUS** and **Indigenous Lands** overlays to refine or fill gaps in ownership coding.
+- **Outputs:**
+  - `{STATE}_Final_Encoded.tif`.
 
-Calculates land cover proportions per parcel.
+---
 
-Joins county boundaries and Indigenous Lands (ILs).
+## Random Forest Classifier
+- The **Random_Forest_Classifier_Training_Script** trains the ownership classification model.
+- Training data (from NWOS) is **confidential** and stored externally.
+- The pipeline typically uses the pre-trained model:  
+  `classify_unknown_ownership_model.pkl`.
 
-Computes parcel geometry (centroid coordinates, area).
+---
 
-Outputs:
-
-temp.csv – Intermediate table with land cover stats and parcel metadata.
-
-{STATE}_Parcel_IDs.json – GeoJSON of parcel IDs and geometries.
-
-2. Ownership Classification (Classify_Unknowns_opt.py)
-Cleans and normalizes ownership names (e.g., removing punctuation, handling Unicode).
-
-Performs hierarchical classification:
-
-Keyword-based detection: Detects Federal, State, Local government, corporations, trusts, religious groups, family ownerships.
-
-Machine learning model: Remaining unknowns are classified using a Random Forest model (classify_unknown_ownership_model.pkl) trained on a curated dataset of ownership names.
-
-Outputs:
-
-new_classified_state_temp.csv – Classified ownership data.
-
-3. Name Matching (Name_Matching_opt.py)
-Groups parcels owned by the same entity despite name variations:
-
-Uses Double Metaphone phonetic encoding.
-
-Considers address combinations for disambiguation.
-
-Assigns a Unq_ID (unique ownership identifier) for each owner.
-
-Outputs:
-
-Full_Data_Table.csv – Consolidated ownership data with parcel counts per owner.
-
-4. Summary (Summary_Script_opt.py)
-Computes forest area and parcel statistics:
-
-Forest_Area = forested land in acres per parcel.
-
-Counts forested parcels and aggregates totals by owner.
-
-Standardizes column names to FIA-compatible codes (e.g., OWNCD, NLCD_41_PROP).
-
-Outputs:
-
-Updated Full_Data_Table.csv.
-
-5. Map Data Encoding (Map_Data_opt.py)
-Joins ownership codes (OWNCD) with parcel geometry.
-
-Combines ownership and NLCD data into a single encoded raster using a reclassification dictionary (New_Raster_Reclass.pickle).
-
-Outputs:
-
-Own_Type_by_Landcover_Encoded.tif.
-
-6. Final Overlay (Last_Overlay_opt.py)
-Applies PADUS (Protected Areas Database of the US) and Indigenous Lands overlays to fill NoData gaps or refine classifications.
-
-Outputs:
-
-{STATE}_Final_Encoded.tif – The final raster dataset.
-
-Random Forest Classifier
-The Random_Forest_Classifier_Training_Script trains a model for classifying ownership names.
-
-The training data (derived from NWOS implementation) is confidential and stored on an external flash drive.
-
-Normally, the pipeline uses the pre-trained classify_unknown_ownership_model.pkl.
-
-Usage
-Place the input .gdb file for the state into /dev/shm/.
-
-Run:
-
-bash
-Copy
-Edit
-python Main.py
-The final outputs will be written to /dev/shm/{STATE}.zip.
+## Usage
+1. Place the input `.gdb` file for the state into `/dev/shm/`.
+2. Run the main pipeline:
+   ```bash
+   python Main.py
