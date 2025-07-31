@@ -98,3 +98,16 @@ This repository contains Python scripts for processing and generating the **FIA 
 2. Run the main pipeline:
    ```bash
    python Main.py
+
+## Final Raster Mosaicking (ArcGIS Pro)
+
+The final step in the FIA Ownership Map workflow is performed in **ArcGIS Pro** and produces a seamless national raster by:
+
+1. **Clipping each state raster** to its corresponding state boundary using the 2019 Census state boundaries hosted on ArcGIS Online (AGOL):  
+   *BND - States 500K (Census 2019)*  
+   Source: [Esri Feature Service](https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/BND___States_500K__Census_2019_/FeatureServer)
+
+2. **Mosaicking the clipped rasters** using the `Mosaic To New Raster` tool in ArcGIS Pro to create a contiguous, nationwide raster surface that encodes ownership type by land cover.
+
+This step ensures all outputs are cleanly clipped, standardized, and aligned to authoritative boundaries for downstream visualization and spatial analysis.
+
