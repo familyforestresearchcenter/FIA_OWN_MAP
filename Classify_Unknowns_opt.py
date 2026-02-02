@@ -15,6 +15,50 @@ from utils.helpers import *
 from configs import *
 from utils.helpers import apply_regex, create_regex_pattern_from_dict, create_regex_pattern_from_list, parallelize_on_rows
 import re
+import time  # added (used in preprocess_all)
+
+# -------------------- LOGGING HELPERS (added; no behavior change) --------------------
+from datetime import datetime
+
+DEBUG_DIR = '/dev/shm'
+KEY = 'PRCLDMPID'  # primary key to track coverage
+
+def _now():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def _write_series(path, name, values):
+    if values:
+        pd.Series(sorted(values), name=name).to_csv(path, index=False)
+
+def log_totals(df, label, start_ids=None, write_dupes=True):
+    """
+    Prints rows, unique PRCLDMPID, duplicate rows on PRCLDMPID, and nulls.
+    If start_ids provided, also prints coverage vs baseline and writes CSVs for missing/extra IDs.
+    """
+    rows = len(df)
+    if KEY in df.columns:
+        ids = df[KEY].astype(str)
+        uniq = ids.nunique(dropna=True)
+        dup_ct = ids.duplicated(keep=False).sum()
+        null_ct = df[KEY].isna().sum()
+        print(f"[{_now()}] [{label}] rows={rows} uniq({KEY})={uniq} dup_rows_on_{KEY}={dup_ct} null_{KEY}={null_ct}")
+        if write_dupes and dup_ct:
+            dup_ids = ids[ids.duplicated(keep=False)].drop_duplicates()
+            out = os.path.join(DEBUG_DIR, f"dupes_{label}.csv")
+            dup_ids.to_csv(out, index=False, header=[KEY])
+            print(f"  -> wrote duplicate {KEY} list: {out} (n={dup_ids.shape[0]})")
+        if start_ids is not None:
+            end_ids = set(ids.dropna().astype(str))
+            missing = start_ids - end_ids
+            extra   = end_ids - start_ids
+            print(f"  coverage_vs_start: missing={len(missing)} extra={len(extra)}")
+            if missing:
+                _write_series(os.path.join(DEBUG_DIR, f"missing_{label}.csv"), KEY, missing)
+            if extra:
+                _write_series(os.path.join(DEBUG_DIR, f"extra_{label}.csv"),   KEY, extra)
+    else:
+        print(f"[{_now()}] [{label}] rows={rows} (no '{KEY}' column)")
+# -------------------- END LOGGING HELPERS --------------------
 
 nltk.download('punkt')
 nltk.download('punkt_tab')
@@ -60,7 +104,7 @@ def get_gov_row(df, wrd_list):
         matched_df['matched_kw'] = matched_terms
     else:
         matched_df = pd.DataFrame(columns=df.columns.tolist() + ['matched_kw'])
-    unmatched_df = df.drop(index=matched_df.index, errors='ignore')
+    unmatched_df = df[~df[KEY].isin(matched_df[KEY])]
     return matched_df, unmatched_df
 
 def preprocess_simple_owner(str1):
@@ -162,8 +206,22 @@ def preprocess_all(input_data):
     table0['OWN1'] = table0['OWN1'].replace('U S FOREST', 'US FOREST SERVICE')
     table0 = preprocess_table(table0)
     table0['initial_class'] = compute_initial_class(table0[['OWN1', 'OWN2']])
+    table0.loc[table0['initial_class'] == -99999, 'initial_class'] = 1
     print(f'Preprocessing done in: {time.time() - start:.2f}s')
     return table0
+
+
+MISSING_ID = "100660192_89848561"
+
+def dbg(df, label):
+    """Small debug block to track the missing record."""
+    if KEY not in df.columns:
+        print(f"[DEBUG:{label}] No PRCLDMPID column")
+        return
+    present = MISSING_ID in set(df[KEY].astype(str))
+    print(f"[DEBUG:{label}] rows={len(df):,}  present={present}")
+    if not present:
+        print(f"⚠️  Missing after step: {label}")
 
 
 if __name__ == '__main__':
@@ -171,8 +229,20 @@ if __name__ == '__main__':
     output_path = os.path.join(TMP_DIR, "new_classified_state_temp.csv")
 
     table = preprocess_all(input_data=input_path)
+
+    # --- BASELINE LOG ---
+    if KEY not in table.columns:
+        raise RuntimeError(f"Expected key column '{KEY}' in input")
+    _start_ids = set(table[KEY].dropna().astype(str))
+    _start_rows = len(table)
+
+    log_totals(table, "00_loaded")
+    dbg(table, "00_loaded")
+
     table['Own_Type'] = None
     table['Simple_Owners'] = table.apply(filEmptyStringsInOwners, axis=1)
+    log_totals(table, "01_after_simple_owners_fill")
+    dbg(table, "01_after_simple_owners_fill")
 
     # Define the keywords that indicate unavailability
     unavailable_keywords = [
@@ -186,13 +256,17 @@ if __name__ == '__main__':
         table['OWN1'].isin(unavailable_keywords) | 
         table['OWN2'].isin(unavailable_keywords)
     ]
-
+    log_totals(not_available_county, "02_not_available_bucket")
+    dbg(not_available_county, "02_not_available_bucket")
 
     # Add them to null DataFrame and set the code -99
     not_available_county['Own_Type'] = -99
 
     # Existing logic for initial_class == 2
     null = pd.concat([table[table['initial_class'] == 2], not_available_county])
+    null['Own_Type'] = -99
+    log_totals(null, "03_null_bucket")
+    dbg(null, "03_null_bucket")
 
     # Remove these records from the main table
     table = table[
@@ -200,97 +274,92 @@ if __name__ == '__main__':
         (~table['OWN1'].isin(unavailable_keywords)) & 
         (~table['OWN2'].isin(unavailable_keywords))
     ]
+    log_totals(table, "04_after_remove_null_unavailable")
+    dbg(table, "04_after_remove_null_unavailable")
+    dbg(table, "04_after_remove_null_unavailable")
 
-    
-
+    # Split to family/other
     family = table[table['initial_class'] == 3]
     other = table[table['initial_class'].isin([0, 1])]
+    log_totals(family, "05_family_initial")
+    dbg(family, "05_family_initial")
 
+    log_totals(other,  "06_other_initial")
+    dbg(other, "06_other_initial")
 
+    # Trusts
     trust, other = get_corp(other, [' trust ', ' rev tr of '])
     family_trusts, unknown_trusts = get_corp(trust, trust_kw)
     family = pd.concat([family, family_trusts])
-
+    log_totals(family,         "07_family_after_family_trusts")
+    dbg(family, "07_family_after_family_trusts")
+    log_totals(unknown_trusts, "08_unknown_trusts")
+    dbg(unknown_trusts, "08_unknown_trusts")
+    log_totals(other,          "09_other_after_trust_split")
+    dbg(other, "09_other_after_trust_split")
 
     trust43, other_trust = get_corp(unknown_trusts, kw43)
     trust43['Own_Type'] = 43
     other = pd.concat([other, other_trust])
+    log_totals(trust43, "10_trust43_bucket")
+    log_totals(other,   "11_other_after_unknown_trusts")
 
-
+    # Farms
     farms, other = get_corp(other, ['farms'])
     family_farms, unknown_farms = get_corp(farms, [' family ', ' brother ', ' son ', ' daughter '])
     family = pd.concat([family, family_farms])
     other = pd.concat([other, unknown_farms])
+    log_totals(family, "12_family_after_farms")
+    log_totals(other,  "13_other_after_farms")
 
-
+    # 42 / religious / 43 corp
     c42, other = get_corp(other, kw42)
     c42['Own_Type'] = 42
-
+    log_totals(c42,   "14_c42_bucket")
+    dbg(c42, "14_c42_bucket")
+    log_totals(other, "15_other_after_c42")
+    dbg(other, "15_other_after_c42")
 
     religious_groups, other = get_corp(other, rel_key_words)
     religious_groups['Own_Type'] = 43
-
+    log_totals(religious_groups, "16_religious_groups_bucket")
+    dbg(religious_groups, "16_religious_groups_bucket")
+    log_totals(other,            "17_other_after_religious")
+    dbg(other, "17_other_after_religious")
 
     c43, other = get_corp(other, kw43)
-    
     exclusion_keywords = [r'\bGOLF\b', r'\bWORLDMARK\b']
     exclusion_pattern = '|'.join(exclusion_keywords)
-
-    # Identify matches and split
     exclude_mask = (
         c43['OWN1'].str.contains(exclusion_pattern, case=False, na=False) |
         c43['OWN2'].str.contains(exclusion_pattern, case=False, na=False)
     )
-
-    # Rows we keep in 43
     other = pd.concat([other, c43[exclude_mask]])
     c43 = c43[~exclude_mask]
     c43['Own_Type'] = 43
-
-
-    def match_government_keywords_flexible(df, keywords_list, label=0):
-        """
-        Match OWN1/OWN2 using flexible token-wise matching with keyword list.
-        Assigns 'Own_Type' = label where any token matches.
-        """
-        matched_rows = []
-        for idx, row in df.iterrows():
-            combined = f"{str(row['OWN1'])} {str(row['OWN2'])}".upper()
-            for kw in keywords_list:
-                if pd.isnull(kw):
-                    continue
-                if kw.strip().upper() in combined:
-                    matched_rows.append(idx)
-                    break
-        matched_df = df.loc[matched_rows].copy()
-        unmatched_df = df.drop(index=matched_rows)
-        matched_df['Own_Type'] = label
-        return matched_df, unmatched_df
-
-
-    def create_regex_pattern_from_list2(word_list):
-       return '|'.join([rf'\b{re.escape(w)}\b' for w in word_list])
+    log_totals(c43,   "18_c43_bucket")
+    dbg(c43, "18_c43_bucket")
+    log_totals(other, "19_other_after_c43_exclusions")
+    dbg(other, "19_other_after_c43_exclusions")
 
 
     # === Step 1: Identify USA Variations FIRST ===
     usa_variations = r'\b(U(\s*\.?\s*)S(\s*\.?\s*)A(\s*\.?\s*)?)\b'
-
     maybe_usa = other[
         other['OWN1'].str.contains(usa_variations, flags=re.IGNORECASE, regex=True) |
         other['OWN2'].str.contains(usa_variations, flags=re.IGNORECASE, regex=True)
     ]
+    log_totals(maybe_usa, "20_maybe_usa")
+    dbg(maybe_usa, "20_maybe_usa")
 
     # Step 1.1: Remove corporate-style names from USA matches
     def create_regex_pattern_from_literals(word_list):
-        # Escapes all items, intended for plain text keywords like 'BANK'
         return '|'.join([rf'\b{re.escape(w)}\b' for w in word_list])
 
     def create_regex_pattern_from_raw(word_list):
-        # Assumes input items are already valid regex, does not escape
         return '|'.join(word_list)
 
     def acronym_regex_variants(acronyms):
-        # Returns both exact and flexible spacing variants for acronyms
         patterns = []
         for acr in acronyms:
             exact = rf'\b{acr}\b'
@@ -299,10 +368,7 @@ if __name__ == '__main__':
             patterns.append(spaced)
         return patterns
 
-    # Acronyms to support flexible spacing
     corp_acronyms = ['LLC', 'INC', 'CORP', 'CO', 'LTD', 'LP', 'LLP', 'PLC']
-
-    # Compose the final pattern from both literal keywords and raw regex
     corp_filter = (
         create_regex_pattern_from_literals(
             corp_keywords + ckw + [
@@ -315,19 +381,19 @@ if __name__ == '__main__':
         + create_regex_pattern_from_raw(acronym_regex_variants(corp_acronyms))
     )
 
-    
     corp_like_usa = (
         maybe_usa['OWN1'].str.contains(corp_filter, regex=True, case=False, na=False) |
         maybe_usa['OWN2'].str.contains(corp_filter, regex=True, case=False, na=False)
     )
-
-    # Split true gov vs corp-like USA rows
     gov = maybe_usa[~corp_like_usa]
     usa_corp = maybe_usa[corp_like_usa]
 
-    # Return corporate rows back to other
-    other = other.drop(maybe_usa.index)
+    other = other[~other[KEY].isin(maybe_usa[KEY])]
     other = pd.concat([other, usa_corp])
+    log_totals(gov,   "21_gov_from_maybe_usa")
+    dbg(gov, "21_gov_from_maybe_usa")
+    log_totals(other, "22_other_after_maybe_usa_split")
+    dbg(other, "22_other_after_maybe_usa_split")
 
     # Normalize to lowercase and check substring presence
     def match_local_keywords(df, keywords):
@@ -336,8 +402,10 @@ if __name__ == '__main__':
             combined = f"{row['OWN1']} {row['OWN2']}".lower()
             if any(kw.lower() in combined for kw in keywords):
                 matched_idx.append(i)
-        return df.loc[matched_idx], df.drop(index=matched_idx)
-
+        matched_df = df.loc[matched_idx]
+        remaining_df = df[~df[KEY].isin(matched_df[KEY])]
+        return matched_df, remaining_df
+    
     # Keywords to catch local government early
     local_gov_pre_kw = [
         "city of", "town of", "village of",
@@ -346,7 +414,12 @@ if __name__ == '__main__':
 
     likely_local_gov, other = match_local_keywords(other, local_gov_pre_kw)
     gov = pd.concat([gov, likely_local_gov], ignore_index=True)
-    
+    log_totals(gov,   "23_gov_after_early_local")
+    dbg(gov, "23_gov_after_early_local")
+
+    log_totals(other, "24_other_after_early_local")
+    dbg(other, "24_other_after_early_local")
+
 
     # === Step 2: Run keyword-based gov search ===
     government_keywords = list(set(government_keywords + [
@@ -358,8 +431,8 @@ if __name__ == '__main__':
         r'\bSTATE COLLEGE\b',
         r'\bCOLLEGE OF\b',
         r'\bCOMMUNITY COLLEGE\b',
-        r'\bU\.?S\.?A?\b',                             # Matches US, U.S., USA
-        r'\bU\s*\.?\s*S\s*\.?\s*A?\s*\.?\b',           # Matches spaced variants: U S, U.S., U S A, etc.
+        r'\bU\.?S\.?A?\b',
+        r'\bU\s*\.?\s*S\s*\.?\s*A?\s*\.?\b',
         r'\bFEDERAL\b',
         r'\bCONSERVATION\b',
         r'\bGOVT\b',
@@ -382,7 +455,6 @@ if __name__ == '__main__':
         r'\bDOD\b',
         r'\bBLM\b',
         r'\bDOE\b',
-        r'\bDOT\b',
         r'\bBIA\b',
         r'\bINTR\b',
         r'\bUSDI\b',
@@ -390,6 +462,10 @@ if __name__ == '__main__':
     ]))
 
     government, other = get_corp(other, government_keywords)
+    log_totals(government, "25_government_keyword_hits")
+    dbg(government, "25_government_keyword_hits")
+    log_totals(other,      "26_other_after_government_kw")
+    dbg(other, "26_other_after_government_kw")
 
     # Step 2.1: Filter out corporate-style names again from gov matches
     # corp_like_gov = government['Simple_Owners'].str.contains(corp_filter, regex=True)
@@ -401,10 +477,12 @@ if __name__ == '__main__':
     gov_add = government[~corp_like_gov]
     unk_gov = government[corp_like_gov]
 
-    gov = pd.concat([gov, gov_add])
+    gov = pd.concat([gov, gov_add]).drop_duplicates(subset=[KEY])
 
     # Put misclassified corporates back into other
-    other = pd.concat([other, unk_gov])
+    other = pd.concat([other, unk_gov]).drop_duplicates(subset=[KEY])
+    log_totals(gov,   "27_gov_after_corp_like_filter")
+    log_totals(other, "28_other_after_reassign_corp_like_gov")
 
     # Filter corp-like names mistakenly added to gov
     corp_like_gov_final = (
@@ -420,26 +498,35 @@ if __name__ == '__main__':
     confirmed_gov['Own_Type'] = 0
 
     # Reassign corp-like rows back to "other"
-    gov = confirmed_gov
-    other = pd.concat([other, misclassified_corp], ignore_index=True)
-
-
-
+    gov = confirmed_gov.drop_duplicates(subset=[KEY])
+    other = pd.concat([other, misclassified_corp]).drop_duplicates(subset=[KEY])
+    log_totals(gov,   "29_confirmed_gov_final")
+    dbg(gov, "29_confirmed_gov_final")
+    log_totals(other, "30_other_after_final_corp_like")
+    dbg(other, "30_other_after_final_corp_like")
 
     other_family = other[other['initial_class'] == 1]
     other = other[other['initial_class'] != 1]
     family = pd.concat([other_family, family])
     family['Own_Type'] = 45
-
+    log_totals(family, "31_family_after_other_family")
+    dbg(family, "31_family_after_other_family")
+    log_totals(other,  "32_other_after_remove_other_family")
+    dbg(other, "32_other_after_remove_other_family")
 
     corp, other = get_corp(other, corp_keywords)
     corp['Own_Type'] = 41
-
+    log_totals(corp,  "33_corp_bucket")
+    dbg(corp, "33_corp_bucket")
+    log_totals(other, "34_other_for_model")
+    dbg(other, "34_other_for_model")
 
     if is_df_parallel:
         other['Simple_Owners'] = parallelize_on_rows(other[['Simple_Owners']], preprocess_df_simple_owner)
     else:
         other['Simple_Owners'] = other['Simple_Owners'].apply(preprocess_simple_owner)
+    log_totals(other, "35_other_after_tokenize")
+    dbg(other, "35_other_after_tokenize")
 
     vectorizer = TfidfVectorizer()
     counts = vectorizer.fit_transform(other.Simple_Owners)
@@ -461,26 +548,27 @@ if __name__ == '__main__':
         predictions = np.append(predictions, preds)
 
     other['Own_Type'] = predictions
-
+    log_totals(other, "36_other_after_model_predictions")
+    dbg(other, "36_other_after_model_predictions")
 
     # other = other[~other.PRCLDMPID.isin(gov.PRCLDMPID)]
-
 
     total = pd.concat([
         other, trust43, family, gov, religious_groups,
         c42, c43, null, corp
     ])
-
-
+    log_totals(total, "37_total_pre_gov_subclassify")
+    dbg(total, "37_total_pre_gov_subclassify")
 
     gov = total[total['Own_Type'] == 0]
     not_gov = total[total['Own_Type'] != 0]
+    log_totals(gov,     "38_gov_for_subclassify")
+    log_totals(not_gov, "39_not_gov_for_subclassify")
 
     # Step 1: Classify Federal Government
-
     federal_kw = federal_kw + [ 
-        r'\bU\.?S\.?A?\b',                             # Matches US, U.S., USA
-        r'\bU\s*\.?\s*S\s*\.?\s*A?\s*\.?\b',           # Matches spaced variants: U S, U.S., U S A, etc.
+        r'\bU\.?S\.?A?\b',
+        r'\bU\s*\.?\s*S\s*\.?\s*A?\s*\.?\b',
         r'\bFEDERAL\b',
         r'\bGOVT\b',
         r'\bDEPARTMENT OF (AGRICULTURE|INTERIOR|DEFENSE|ENERGY|EDUCATION|JUSTICE|LABOR|COMMERCE)\b',
@@ -508,12 +596,14 @@ if __name__ == '__main__':
         r'\bAmerica\b'
     ]
 
-    
     fed_gov, remaining_gov = get_gov_row(gov, federal_kw)
-    # print(fed_gov[['OWN1', 'matched_kw']])
     fed_gov['Own_Type'] = 25
+    log_totals(fed_gov, "40_fed_gov")
+    dbg(fed_gov, "40_fed_gov")
+    log_totals(remaining_gov, "41_remaining_after_fed")
+    dbg(remaining_gov, "41_remaining_after_fed")
 
- # Step 2: Classify Local Government
+    # Step 2: Classify Local Government
     local_keywords = [
         r'\bCITY\b',
         r'\bTOWN\b',
@@ -526,7 +616,6 @@ if __name__ == '__main__':
         r'\bSCHOOL DISTRICT\b',
         r'\bFIRE DISTRICT\b',
         r'\bPOLICE DEPARTMENT\b',
-        # r'\bWATER\b',
         r'\bIRRIGATION\b',
         r'\bSEWER\b',
         r'\bDRAINAGE\b',
@@ -537,7 +626,10 @@ if __name__ == '__main__':
     local_pattern = '|'.join(local_keywords)
     local_gov, remaining_gov = get_gov_row(remaining_gov, [local_pattern])
     local_gov['Own_Type'] = 32
-
+    log_totals(local_gov, "42_local_gov")
+    dbg(local_gov, "42_local_gov")
+    log_totals(remaining_gov, "43_remaining_after_local")
+    dbg(remaining_gov, "43_remaining_after_local")
 
     # Step 3: Classify State Government
     state_name = gov['State_name'].unique()[0].upper()
@@ -559,25 +651,46 @@ if __name__ == '__main__':
     state_pattern = '|'.join(state_keywords)
     state_gov, remaining_gov = get_gov_row(remaining_gov, [state_pattern])
     state_gov['Own_Type'] = 31
+    log_totals(state_gov, "44_state_gov")
+    dbg(state_gov, "44_state_gov")
+    log_totals(remaining_gov, "45_remaining_after_state")
+    dbg(remaining_gov, "45_remaining_after_state")
+
 
     # Step 4: Any leftovers are likely local
     remaining_gov['Own_Type'] = 32
+    log_totals(remaining_gov, "46_remaining_gov_as_local")
 
     # Step 5: Combine all
     total = pd.concat([fed_gov, local_gov, state_gov, remaining_gov, not_gov])
+    log_totals(total, "47_total_pre_dedupe")
+    dbg(total, "47_total_pre_dedupe")
+
     total = total.drop_duplicates(['PRCLDMPID'], keep='first')
+    log_totals(total, "48_total_post_dedupe")
+    dbg(total, "48_total_post_dedupe")
 
+    # --- FINAL GUARD: start vs end ---
+    log_totals(total, "99_before_write", start_ids=_start_ids)
+    dbg(total, "99_before_write")
+    _end_rows = len(total)
+    if _end_rows != _start_rows:
+        end_ids = set(total[KEY].dropna().astype(str)) if KEY in total.columns else set()
+        missing = _start_ids - end_ids
+        extra   = end_ids - _start_ids
+        _write_series(os.path.join(DEBUG_DIR, "final_missing_ids_classify.csv"), KEY, missing)
+        _write_series(os.path.join(DEBUG_DIR, "final_extra_ids_classify.csv"),   KEY, extra)
+        raise RuntimeError(
+            f"[classify_unknowns] Row count mismatch: start={_start_rows}, end={_end_rows}. "
+            f"Missing={len(missing)}, Extra={len(extra)}. "
+            f"See {DEBUG_DIR}/final_missing_ids_classify.csv and final_extra_ids_classify.csv"
+        )
+    else:
+        print(f"[OK] classify_unknowns row count preserved: {_end_rows} rows")
+    # --- END FINAL GUARD ---
 
-    # state_name = gov['State_name'].unique()[0]
-    # state_gov, other_gov = get_gov_row(gov, [' state', ' state college', ' state university', 'commonwealth', flipped_us_state[state_name], state_name])
-    # fed_gov, local_gov = get_gov_row(other_gov, federal_kw)
-
-    # fed_gov['Own_Type'] = 25
-    # state_gov['Own_Type'] = 31
-    # local_gov['Own_Type'] = 32
-
-    # total = pd.concat([fed_gov, state_gov, local_gov, not_gov])
-    # total = total.drop_duplicates(['PRCLDMPID'], keep='first')
+    print("[diag] Own_Type distribution at end of Classify_Unknowns:")
+    print(total['Own_Type'].value_counts(dropna=False))
 
     gc.collect()
     total.to_csv(output_path)

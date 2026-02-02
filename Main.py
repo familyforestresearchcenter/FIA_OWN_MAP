@@ -59,42 +59,31 @@ if __name__ == '__main__':
     if os.path.exists(encoded_tif):
         os.remove(encoded_tif)
 
-
     # === 1. Get state_name from GDB in /tmp/
     gdb_file = next((f for f in os.listdir(TMP_DIR) if f.endswith('.gdb')), None)
     if gdb_file is None:
         raise FileNotFoundError("No .gdb file found in /dev/shm/")
     state_name = gdb_file.split('.')[0]
 
-    # === 2. Rename Full and Reduced tables with state prefix
+    # === 2. Rename Full table with state prefix
     full_table_old = os.path.join(TMP_DIR, 'Full_Data_Table.csv')
-    reduced_table_old = os.path.join(TMP_DIR, 'Reduced_Data_Table.csv')
     final_raster_path = os.path.join(TMP_DIR, f'{state_name}_Final_Encoded.tif')
-
-    full_table_new = os.path.join(TMP_DIR, f'{state_name}_Full_Data_Table.csv')
-    reduced_table_new = os.path.join(TMP_DIR, f'{state_name}_Reduced_Data_Table.csv')
     parcel_id_path = os.path.join(TMP_DIR, f"{state_name}_Parcel_IDs.json")
 
+    full_table_new = os.path.join(TMP_DIR, f'{state_name}_Full_Data_Table.csv')
+
     os.rename(full_table_old, full_table_new)
-    os.rename(reduced_table_old, reduced_table_new)
 
     # === 3. Create zip as /tmp/{state_name}.zip
     zip_path = os.path.join(TMP_DIR, f'{state_name}.zip')
     with zipfile.ZipFile(zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
         zipf.write(full_table_new, arcname=os.path.basename(full_table_new))
-        # zipf.write(reduced_table_new, arcname=os.path.basename(reduced_table_new))
         zipf.write(final_raster_path, arcname=os.path.basename(final_raster_path))
         zipf.write(parcel_id_path, arcname=os.path.basename(parcel_id_path))
 
-    # # # ✅ Include the Parcel_IDs json
-    #     parcel_id_path = os.path.join(TMP_DIR, f"{state_name}_Parcel_IDs.json")
-    #     if os.path.exists(parcel_id_path):
-    #         zipf.write(parcel_id_path, arcname=os.path.basename(parcel_raster_path))
-
-
     print(f"\n✅ Zipped outputs written to: {zip_path}")
 
-    # Final cleanup, keep only WA.zip and system-private dirs
+    # Final cleanup, keep only {state}.zip and system-private dirs
     files_to_keep = {f"{state_name}.zip"}
     system_dirs_prefixes = ("systemd-private-", "snap-private-tmp")
 
@@ -113,9 +102,6 @@ if __name__ == '__main__':
         except Exception as e:
             print(f"Warning: could not delete {fpath} — {e}")
 
-
     # === 4. Report runtime
     t2 = time.time()
     print(f'{state_name} Completed in : {t2 - t1:.2f} seconds\n')
-
-

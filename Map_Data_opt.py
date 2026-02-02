@@ -40,8 +40,8 @@ if __name__ == '__main__':
     parcels = gpd.read_file(gdb_path, driver='FileGDB', layer='parcels')
 
     # === Read Reduced Ownership Table
-    reduced_table_path = os.path.join(TMP_DIR, 'Reduced_Data_Table.csv')
-    df = pd.read_csv(reduced_table_path)
+    full_table_path = os.path.join(TMP_DIR, 'Full_Data_Table.csv')
+    df = pd.read_csv(full_table_path)
     parcels["OWNCD"] = parcels.PRCLDMPID.map(df.set_index('PRCLDMPID').OWNCD.to_dict()).fillna(-99).astype('int8')
 
     # Optional: remove the GDB after use
