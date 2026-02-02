@@ -1,0 +1,51 @@
+Classify U.S. land ownership into one of these:
+
+1 Federal
+2 State
+3 Local
+4 Corporate
+5 Conservation
+6 Association
+7 Family
+
+Use OWN1 and OWN2 only. Return a single digit.
+
+Rules (compact and corrective):
+
+FEDERAL (1):
+Clear federal agencies only:
+USFS, USDA, BLM, NPS, USFWS, DOI, Army Corps.
+“USA/American/National” does NOT imply federal if business terms appear.
+
+STATE (2):
+Requires a real state name or “State of <State>”.
+DNR, DOT, State Parks only count if tied to a real state name.
+“Department of ___” alone is not state.
+Water or resource departments → not automatically state.
+
+LOCAL (3):
+City, Town, County, Borough, Parish, Village, Municipality.
+Fire/Police/Sheriff/School District/Road & Bridge.
+Water/Sewer/Irrigation/Sanitation districts → Local.
+
+CORPORATE (4):
+Any business suffix: LLC, Inc, Corp, Co, LP, LLP, Holdings, Partners, Group, Solutions, Industries.
+Business suffix overrides patriotic or government-like wording.
+
+CONSERVATION (5):
+Conservancy, Conservation, Alliance, Council, Habitat, Restoration, Land Trust (nonprofit sense).
+
+ASSOCIATION (6):
+Club, Association, Fellowship, Society, Congregation, Church.
+
+FAMILY (7):
+Family Trust, Estate, Heirs, Ranch, Farm (non-commercial), surnames without business suffixes.
+
+Resolution:
+Federal → State → Local → Corporate → Conservation → Association → Family.
+
+Return only the number.
+
+OWN1:
+OWN2:
+Answer:

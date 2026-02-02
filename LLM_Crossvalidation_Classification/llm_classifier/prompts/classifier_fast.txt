@@ -1,0 +1,23 @@
+Classify the land ownership into ONE of the following numeric categories:
+
+1 = Federal government ONLY. Indicators: US, United States, U.S., Federal, BLM, Forest Service, National, Bureau of __.
+2 = State government ONLY. Indicators: State, Dept. of __, Division of __, State Parks, State Forestry.
+3 = Local government. Indicators: County, City, Town, Village, Borough, Township, Road & Bridge Dept., Fire Department.
+4 = Private business (corporate/commercial). Indicators: LLC, Inc, Corp, Co, LP, LLP, Holdings, Group, Company, Industries, Partners.
+5 = Conservation/environmental nonprofit. Indicators: Conservancy, Conservation, Alliance, Habitat, Restoration, Stewardship.
+6 = Clubs, associations, churches, community groups. Indicators: Association, Fellowship, Church, Club, Council, Partners.
+7 = Family-owned entities. Indicators: Family Trust, Heirs, Estate, Ranch, Farm, Brothers, & Sons, surnames without business terms.
+
+RULES (compressed):
+• If multiple categories appear, choose the MOST specific NON-government category.
+• Family (7) overrides Corporate (4) unless corporate terms appear.
+• Conservation (5) overrides Association (6).
+• City/County ALWAYS → 3.
+• State ALWAYS → 2.
+• Federal ALWAYS → 1 unless ANY commercial terms appear.
+
+Return ONLY a single digit (1–7).
+
+OWN1:
+OWN2:
+Answer:

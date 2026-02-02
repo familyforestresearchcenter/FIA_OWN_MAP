@@ -1,0 +1,255 @@
+Map_Value_Code,Second_Iteration_Code,FIrst_Iteration_Code,FIA_Ownership_Code,FIA_Ownership_Description,Land_Cover_Code,Land_Cover_Description,cover_clean,owner_clean,CLASS1_FULL,CLASS2_MAP,CLASS2_MAP_CODE,CLASS3_ERROR,CLASS3_ERROR_CODE,CLASS4_MAP,CLASS4_DESCRIPTION
+0,,,,,,,-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,0,Unknown
+1,-101,,,,-1,"No NLCD Data, Used Fill Value",-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+2,2499,,25,Federal,-1,"No NLCD Data, Used Fill Value",-1,25,OWNER: 25 / COVER: -1,public non-forest,10,ownership data only,2,1,Non-Forest
+3,3099,,31,State,-1,"No NLCD Data, Used Fill Value",-1,31,OWNER: 31 / COVER: -1,public non-forest,10,ownership data only,2,1,Non-Forest
+4,3199,,32,"Local (county, municipal, etc.)",-1,"No NLCD Data, Used Fill Value",-1,32,OWNER: 32 / COVER: -1,public non-forest,10,ownership data only,2,1,Non-Forest
+5,3299,,,,-1,,-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+6,4099,,41,Corporate,-1,"No NLCD Data, Used Fill Value",-1,41,OWNER: 41 / COVER: -1,corporate non-forest,2,ownership data only,2,1,Non-Forest
+7,4199,,42,Nongovernmental conservation/natural resources organization,-1,"No NLCD Data, Used Fill Value",-1,42,OWNER: 42 / COVER: -1,other private non-forest,8,ownership data only,2,1,Non-Forest
+8,4299,,43,Unincorporated local partnership/association/club,-1,"No NLCD Data, Used Fill Value",-1,43,OWNER: 43 / COVER: -1,other private non-forest,8,ownership data only,2,1,Non-Forest
+9,4399,,44,Native American,-1,"No NLCD Data, Used Fill Value",-1,44,OWNER: 44 / COVER: -1,indigenous non-forest,6,ownership data only,2,1,Non-Forest
+10,4499,,45,Family,-1,"No NLCD Data, Used Fill Value",-1,45,OWNER: 45 / COVER: -1,family non-forest,4,ownership data only,2,1,Non-Forest
+11,,-99999.01,0,PRCLDMPID in table but not in ID_Dict,-1,"No NLCD Data, Used Fill Value",-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+12,,-99998.99,0,PRCLDMPID in table but not in ID_Dict,11,Open Water,11,-1,OWNER: -1 / COVER: 11,water,0,cover data only,1,2,Water
+13,,-99998.98,0,PRCLDMPID in table but not in ID_Dict,21,"Developed, Open Space",21,-1,OWNER: -1 / COVER: 21,unknown non-forest,12,cover data only,1,1,Non-Forest
+14,,-99998.97,0,PRCLDMPID in table but not in ID_Dict,22,"Developed, Low Intensity",22,-1,OWNER: -1 / COVER: 22,unknown non-forest,12,cover data only,1,1,Non-Forest
+15,,-99998.96,0,PRCLDMPID in table but not in ID_Dict,23,"Developed, Medium Intensity",23,-1,OWNER: -1 / COVER: 23,unknown non-forest,12,cover data only,1,1,Non-Forest
+16,,-99998.95,0,PRCLDMPID in table but not in ID_Dict,24,"Developed, High Intensity",24,-1,OWNER: -1 / COVER: 24,unknown non-forest,12,cover data only,1,1,Non-Forest
+17,,-99998.94,0,PRCLDMPID in table but not in ID_Dict,31,Barren Land,31,-1,OWNER: -1 / COVER: 31,unknown non-forest,12,cover data only,1,1,Non-Forest
+18,,-99998.93,0,PRCLDMPID in table but not in ID_Dict,41,Deciduous Forest,41,-1,OWNER: -1 / COVER: 41,unknown forest,11,cover data only,1,0,Unknown Forest
+19,,-99998.92,0,PRCLDMPID in table but not in ID_Dict,42,Evergreen Forest,42,-1,OWNER: -1 / COVER: 42,unknown forest,11,cover data only,1,0,Unknown Forest
+20,,-99998.91,0,PRCLDMPID in table but not in ID_Dict,43,Mixed Forest,43,-1,OWNER: -1 / COVER: 43,unknown forest,11,cover data only,1,0,Unknown Forest
+21,,-99998.89,0,PRCLDMPID in table but not in ID_Dict,52,Shrub/Scrub,52,-1,OWNER: -1 / COVER: 52,unknown non-forest,12,cover data only,1,1,Non-Forest
+22,,-99998.88,0,PRCLDMPID in table but not in ID_Dict,71,Herbaceuous,71,-1,OWNER: -1 / COVER: 71,unknown non-forest,12,cover data only,1,1,Non-Forest
+23,,-99998.87,0,PRCLDMPID in table but not in ID_Dict,81,Hay/Pasture,81,-1,OWNER: -1 / COVER: 81,unknown non-forest,12,cover data only,1,1,Non-Forest
+24,,-99998.86,0,PRCLDMPID in table but not in ID_Dict,82,Cultivated Crops,82,-1,OWNER: -1 / COVER: 82,unknown non-forest,12,cover data only,1,1,Non-Forest
+25,,-99998.85,0,PRCLDMPID in table but not in ID_Dict,90,Woody Wetlands,90,-1,OWNER: -1 / COVER: 90,unknown forest,11,cover data only,1,0,Unknown Forest
+26,,-99998.84,0,PRCLDMPID in table but not in ID_Dict,95,Emergent Herbaceuous Wetlands,95,-1,OWNER: -1 / COVER: 95,unknown non-forest,12,cover data only,1,1,Non-Forest
+27,,99999.01,0,Unmarked Public,11,Open Water,11,-1,OWNER: -1 / COVER: 11,water,0,cover data only,1,2,Water
+28,,99999.02,0,Unmarked Public,21,"Developed, Open Space",21,-1,OWNER: -1 / COVER: 21,unknown non-forest,12,cover data only,1,1,Non-Forest
+29,,99999.03,0,Unmarked Public,22,"Developed, Low Intensity",22,-1,OWNER: -1 / COVER: 22,unknown non-forest,12,cover data only,1,1,Non-Forest
+30,,99999.04,0,Unmarked Public,23,"Developed, Medium Intensity",23,-1,OWNER: -1 / COVER: 23,unknown non-forest,12,cover data only,1,1,Non-Forest
+31,,99999.05,0,Unmarked Public,24,"Developed, High Intensity",24,-1,OWNER: -1 / COVER: 24,unknown non-forest,12,cover data only,1,1,Non-Forest
+32,,99999.06,0,Unmarked Public,31,Barren Land,31,-1,OWNER: -1 / COVER: 31,unknown non-forest,12,cover data only,1,1,Non-Forest
+33,,99999.07,0,Unmarked Public,41,Deciduous Forest,41,-1,OWNER: -1 / COVER: 41,unknown forest,11,cover data only,1,0,Unknown Forest
+34,,99999.08,0,Unmarked Public,42,Evergreen Forest,42,-1,OWNER: -1 / COVER: 42,unknown forest,11,cover data only,1,0,Unknown Forest
+35,,99999.09,0,Unmarked Public,43,Mixed Forest,43,-1,OWNER: -1 / COVER: 43,unknown forest,11,cover data only,1,0,Unknown Forest
+36,,99999.11,0,Unmarked Public,52,Shrub/Scrub,52,-1,OWNER: -1 / COVER: 52,unknown non-forest,12,cover data only,1,1,Non-Forest
+37,,99999.12,0,Unmarked Public,71,Herbaceuous,71,-1,OWNER: -1 / COVER: 71,unknown non-forest,12,cover data only,1,1,Non-Forest
+38,,99999.13,0,Unmarked Public,81,Hay/Pasture,81,-1,OWNER: -1 / COVER: 81,unknown non-forest,12,cover data only,1,1,Non-Forest
+39,,99999.14,0,Unmarked Public,82,Cultivated Crops,82,-1,OWNER: -1 / COVER: 82,unknown non-forest,12,cover data only,1,1,Non-Forest
+40,,99999.15,0,Unmarked Public,90,Woody Wetlands,90,-1,OWNER: -1 / COVER: 90,unknown forest,11,cover data only,1,0,Unknown Forest
+41,,99999.16,0,Unmarked Public,95,Emergent Herbaceuous Wetlands,95,-1,OWNER: -1 / COVER: 95,unknown non-forest,12,cover data only,1,1,Non-Forest
+42,,,0,Unknown,,,-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+43,-9901,,0,Null ownership DMP Data,-1,"No NLCD Data, Used Fill Value",-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+44,-9805,-98.84,0,Null ownership DMP Data,95,Emergent Herbaceuous Wetlands,95,-1,OWNER: -1 / COVER: 95,unknown non-forest,12,cover data only,1,1,Non-Forest
+45,-9810,-98.85,0,Null ownership DMP Data,90,Woody Wetlands,90,-1,OWNER: -1 / COVER: 90,unknown forest,11,cover data only,1,0,Unknown Forest
+46,-9818,-98.86,0,Null ownership DMP Data,82,Cultivated Crops,82,-1,OWNER: -1 / COVER: 82,unknown non-forest,12,cover data only,1,1,Non-Forest
+47,-9819,-98.87,0,Null ownership DMP Data,81,Hay/Pasture,81,-1,OWNER: -1 / COVER: 81,unknown non-forest,12,cover data only,1,1,Non-Forest
+48,-9826,,0,Null ownership DMP Data,74,Moss,74,-1,OWNER: -1 / COVER: 74,unknown non-forest,12,cover data only,1,1,Non-Forest
+49,-9827,,0,Null ownership DMP Data,73,Lichens,73,-1,OWNER: -1 / COVER: 73,unknown non-forest,12,cover data only,1,1,Non-Forest
+50,-9828,,0,Null ownership DMP Data,72,Sedge/Herbaceous,72,-1,OWNER: -1 / COVER: 72,unknown non-forest,12,cover data only,1,1,Non-Forest
+51,-9829,-98.88,0,Null ownership DMP Data,71,Herbaceuous,71,-1,OWNER: -1 / COVER: 71,unknown non-forest,12,cover data only,1,1,Non-Forest
+52,-9848,-98.89,0,Null ownership DMP Data,52,Shrub/Scrub,52,-1,OWNER: -1 / COVER: 52,unknown non-forest,12,cover data only,1,1,Non-Forest
+53,-9849,,0,Null ownership DMP Data,51,Dwarf Scrub,51,-1,OWNER: -1 / COVER: 51,unknown non-forest,12,cover data only,1,1,Non-Forest
+54,-9857,-98.91,0,Null ownership DMP Data,43,Mixed Forest,43,-1,OWNER: -1 / COVER: 43,unknown forest,11,cover data only,1,0,Unknown Forest
+55,-9858,-98.92,0,Null ownership DMP Data,42,Evergreen Forest,42,-1,OWNER: -1 / COVER: 42,unknown forest,11,cover data only,1,0,Unknown Forest
+56,-9859,-98.93,0,Null ownership DMP Data,41,Deciduous Forest,41,-1,OWNER: -1 / COVER: 41,unknown forest,11,cover data only,1,0,Unknown Forest
+57,-9869,-98.94,0,Null ownership DMP Data,31,Barren Land,31,-1,OWNER: -1 / COVER: 31,unknown non-forest,12,cover data only,1,1,Non-Forest
+58,-9876,-98.95,0,Null ownership DMP Data,24,"Developed, High Intensity",24,-1,OWNER: -1 / COVER: 24,unknown non-forest,12,cover data only,1,1,Non-Forest
+59,-9877,-98.96,0,Null ownership DMP Data,23,"Developed, Medium Intensity",23,-1,OWNER: -1 / COVER: 23,unknown non-forest,12,cover data only,1,1,Non-Forest
+60,-9878,-98.97,0,Null ownership DMP Data,22,"Developed, Low Intensity",22,-1,OWNER: -1 / COVER: 22,unknown non-forest,12,cover data only,1,1,Non-Forest
+61,-9879,-98.98,0,Null ownership DMP Data,21,"Developed, Open Space",21,-1,OWNER: -1 / COVER: 21,unknown non-forest,12,cover data only,1,1,Non-Forest
+62,-9888,,0,Null ownership DMP Data,12,Perennial Ice/Snow,12,-1,OWNER: -1 / COVER: 12,unknown non-forest,12,cover data only,1,1,Non-Forest
+63,-9889,-98.99,0,Null ownership DMP Data,11,Open Water,11,-1,OWNER: -1 / COVER: 11,water,0,cover data only,1,2,Water
+64,-9900,,0,Null ownership DMP Data,0,Unclassified,-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+65,-5,,0,Unmarked Public/Unknown,95,Emergent Herbaceuous Wetlands,95,-1,OWNER: -1 / COVER: 95,unknown non-forest,12,cover data only,1,1,Non-Forest
+66,-10,,0,Unmarked Public/Unknown,90,Woody Wetlands,90,-1,OWNER: -1 / COVER: 90,unknown forest,11,cover data only,1,0,Unknown Forest
+67,-18,,0,Unmarked Public/Unknown,82,Cultivated Crops,82,-1,OWNER: -1 / COVER: 82,unknown non-forest,12,cover data only,1,1,Non-Forest
+68,-19,,0,Unmarked Public/Unknown,81,Hay/Pasture,81,-1,OWNER: -1 / COVER: 81,unknown non-forest,12,cover data only,1,1,Non-Forest
+69,-26,,0,Unmarked Public/Unknown,74,Moss,74,-1,OWNER: -1 / COVER: 74,unknown non-forest,12,cover data only,1,1,Non-Forest
+70,-27,,0,Unmarked Public/Unknown,73,Lichens,73,-1,OWNER: -1 / COVER: 73,unknown non-forest,12,cover data only,1,1,Non-Forest
+71,-28,,0,Unmarked Public/Unknown,72,Sedge/Herbaceous,72,-1,OWNER: -1 / COVER: 72,unknown non-forest,12,cover data only,1,1,Non-Forest
+72,-29,,0,Unmarked Public/Unknown,71,Herbaceuous,71,-1,OWNER: -1 / COVER: 71,unknown non-forest,12,cover data only,1,1,Non-Forest
+73,-48,,0,Unmarked Public/Unknown,52,Shrub/Scrub,52,-1,OWNER: -1 / COVER: 52,unknown non-forest,12,cover data only,1,1,Non-Forest
+74,-49,,0,Unmarked Public/Unknown,51,Dwarf Scrub,51,-1,OWNER: -1 / COVER: 51,unknown non-forest,12,cover data only,1,1,Non-Forest
+75,-57,,0,Unmarked Public/Unknown,43,Mixed Forest,43,-1,OWNER: -1 / COVER: 43,unknown forest,11,cover data only,1,0,Unknown Forest
+76,-58,,0,Unmarked Public/Unknown,42,Evergreen Forest,42,-1,OWNER: -1 / COVER: 42,unknown forest,11,cover data only,1,0,Unknown Forest
+77,-59,,0,Unmarked Public/Unknown,41,Deciduous Forest,41,-1,OWNER: -1 / COVER: 41,unknown forest,11,cover data only,1,0,Unknown Forest
+78,-69,,0,Unmarked Public/Unknown,31,Barren Land,31,-1,OWNER: -1 / COVER: 31,unknown non-forest,12,cover data only,1,1,Non-Forest
+79,-76,,0,Unmarked Public/Unknown,24,"Developed, High Intensity",24,-1,OWNER: -1 / COVER: 24,unknown non-forest,12,cover data only,1,1,Non-Forest
+80,-77,,0,Unmarked Public/Unknown,23,"Developed, Medium Intensity",23,-1,OWNER: -1 / COVER: 23,unknown non-forest,12,cover data only,1,1,Non-Forest
+81,-78,,0,Unmarked Public/Unknown,22,"Developed, Low Intensity",22,-1,OWNER: -1 / COVER: 22,unknown non-forest,12,cover data only,1,1,Non-Forest
+82,-79,,0,Unmarked Public/Unknown,21,"Developed, Open Space",21,-1,OWNER: -1 / COVER: 21,unknown non-forest,12,cover data only,1,1,Non-Forest
+83,-88,,0,Unmarked Public/Unknown,12,Perennial Ice/Snow,12,-1,OWNER: -1 / COVER: 12,unknown non-forest,12,cover data only,1,1,Non-Forest
+84,-89,,0,Unmarked Public/Unknown,11,Open Water,11,-1,OWNER: -1 / COVER: 11,water,0,cover data only,1,2,Water
+85,-100,,0,Unmarked Public/Unknown,0,Unclassified,-1,-1,OWNER: -1 / COVER: -1,unknown non-forest,12,no data,0,1,Non-Forest
+86,4595,45.16,45,Family,95,Emergent Herbaceuous Wetlands,95,45,OWNER: 45 / COVER: 95,family non-forest,4,ownership and cover data,3,1,Non-Forest
+87,4590,45.15,45,Family,90,Woody Wetlands,90,45,OWNER: 45 / COVER: 90,family forest,3,ownership and cover data,3,3,Family Forest
+88,4582,45.14,45,Family,82,Cultivated Crops,82,45,OWNER: 45 / COVER: 82,family non-forest,4,ownership and cover data,3,1,Non-Forest
+89,4581,45.13,45,Family,81,Hay/Pasture,81,45,OWNER: 45 / COVER: 81,family non-forest,4,ownership and cover data,3,1,Non-Forest
+90,4574,,45,Family,74,Moss,74,45,OWNER: 45 / COVER: 74,family non-forest,4,ownership and cover data,3,1,Non-Forest
+91,4573,,45,Family,73,Lichens,73,45,OWNER: 45 / COVER: 73,family non-forest,4,ownership and cover data,3,1,Non-Forest
+92,4572,,45,Family,72,Sedge/Herbaceous,72,45,OWNER: 45 / COVER: 72,family non-forest,4,ownership and cover data,3,1,Non-Forest
+93,4571,45.12,45,Family,71,Herbaceuous,71,45,OWNER: 45 / COVER: 71,family non-forest,4,ownership and cover data,3,1,Non-Forest
+94,4552,45.11,45,Family,52,Shrub/Scrub,52,45,OWNER: 45 / COVER: 52,family non-forest,4,ownership and cover data,3,1,Non-Forest
+95,4551,,45,Family,51,Dwarf Scrub,51,45,OWNER: 45 / COVER: 51,family non-forest,4,ownership and cover data,3,1,Non-Forest
+96,4543,45.09,45,Family,43,Mixed Forest,43,45,OWNER: 45 / COVER: 43,family forest,3,ownership and cover data,3,3,Family Forest
+97,4542,45.08,45,Family,42,Evergreen Forest,42,45,OWNER: 45 / COVER: 42,family forest,3,ownership and cover data,3,3,Family Forest
+98,4541,45.07,45,Family,41,Deciduous Forest,41,45,OWNER: 45 / COVER: 41,family forest,3,ownership and cover data,3,3,Family Forest
+99,4531,45.06,45,Family,31,Barren Land,31,45,OWNER: 45 / COVER: 31,family non-forest,4,ownership and cover data,3,1,Non-Forest
+100,4524,45.05,45,Family,24,"Developed, High Intensity",24,45,OWNER: 45 / COVER: 24,family non-forest,4,ownership and cover data,3,1,Non-Forest
+101,4523,45.04,45,Family,23,"Developed, Medium Intensity",23,45,OWNER: 45 / COVER: 23,family non-forest,4,ownership and cover data,3,1,Non-Forest
+102,4522,45.03,45,Family,22,"Developed, Low Intensity",22,45,OWNER: 45 / COVER: 22,family non-forest,4,ownership and cover data,3,1,Non-Forest
+103,4521,45.02,45,Family,21,"Developed, Open Space",21,45,OWNER: 45 / COVER: 21,family non-forest,4,ownership and cover data,3,1,Non-Forest
+104,4512,,45,Family,12,Perennial Ice/Snow,12,45,OWNER: 45 / COVER: 12,family non-forest,4,ownership and cover data,3,1,Non-Forest
+105,4511,45.01,45,Family,11,Open Water,11,45,OWNER: 45 / COVER: 11,water,0,ownership and cover data,3,2,Water
+106,4500,,45,Family,0,Unclassified,-1,45,OWNER: 45 / COVER: -1,family non-forest,4,ownership data only,2,1,Non-Forest
+107,4495,44.16,44,Native American,95,Emergent Herbaceuous Wetlands,95,44,OWNER: 44 / COVER: 95,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+108,4490,44.15,44,Native American,90,Woody Wetlands,90,44,OWNER: 44 / COVER: 90,indigenous forest,5,ownership and cover data,3,5,Tribal Forest
+109,4482,44.14,44,Native American,82,Cultivated Crops,82,44,OWNER: 44 / COVER: 82,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+110,4481,44.13,44,Native American,81,Hay/Pasture,81,44,OWNER: 44 / COVER: 81,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+111,4474,,44,Native American,74,Moss,74,44,OWNER: 44 / COVER: 74,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+112,4473,,44,Native American,73,Lichens,73,44,OWNER: 44 / COVER: 73,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+113,4472,,44,Native American,72,Sedge/Herbaceous,72,44,OWNER: 44 / COVER: 72,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+114,4471,44.12,44,Native American,71,Herbaceuous,71,44,OWNER: 44 / COVER: 71,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+115,4452,44.11,44,Native American,52,Shrub/Scrub,52,44,OWNER: 44 / COVER: 52,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+116,4451,,44,Native American,51,Dwarf Scrub,51,44,OWNER: 44 / COVER: 51,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+117,4443,44.09,44,Native American,43,Mixed Forest,43,44,OWNER: 44 / COVER: 43,indigenous forest,5,ownership and cover data,3,5,Tribal Forest
+118,4442,44.08,44,Native American,42,Evergreen Forest,42,44,OWNER: 44 / COVER: 42,indigenous forest,5,ownership and cover data,3,5,Tribal Forest
+119,4441,44.07,44,Native American,41,Deciduous Forest,41,44,OWNER: 44 / COVER: 41,indigenous forest,5,ownership and cover data,3,5,Tribal Forest
+120,4431,44.06,44,Native American,31,Barren Land,31,44,OWNER: 44 / COVER: 31,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+121,4424,44.05,44,Native American,24,"Developed, High Intensity",24,44,OWNER: 44 / COVER: 24,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+122,4423,44.04,44,Native American,23,"Developed, Medium Intensity",23,44,OWNER: 44 / COVER: 23,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+123,4422,44.03,44,Native American,22,"Developed, Low Intensity",22,44,OWNER: 44 / COVER: 22,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+124,4421,44.02,44,Native American,21,"Developed, Open Space",21,44,OWNER: 44 / COVER: 21,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+125,4412,,44,Native American,12,Perennial Ice/Snow,12,44,OWNER: 44 / COVER: 12,indigenous non-forest,6,ownership and cover data,3,1,Non-Forest
+126,4411,44.01,44,Native American,11,Open Water,11,44,OWNER: 44 / COVER: 11,water,0,ownership and cover data,3,2,Water
+127,4400,,44,Native American,0,Unclassified,-1,44,OWNER: 44 / COVER: -1,indigenous non-forest,6,ownership data only,2,1,Non-Forest
+128,4395,43.16,43,Unincorporated local partnership/association/club,95,Emergent Herbaceuous Wetlands,95,43,OWNER: 43 / COVER: 95,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+129,4390,43.15,43,Unincorporated local partnership/association/club,90,Woody Wetlands,90,43,OWNER: 43 / COVER: 90,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+130,4382,43.14,43,Unincorporated local partnership/association/club,82,Cultivated Crops,82,43,OWNER: 43 / COVER: 82,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+131,4381,43.13,43,Unincorporated local partnership/association/club,81,Hay/Pasture,81,43,OWNER: 43 / COVER: 81,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+132,4374,,43,Unincorporated local partnership/association/club,74,Moss,74,43,OWNER: 43 / COVER: 74,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+133,4373,,43,Unincorporated local partnership/association/club,73,Lichens,73,43,OWNER: 43 / COVER: 73,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+134,4372,,43,Unincorporated local partnership/association/club,72,Sedge/Herbaceous,72,43,OWNER: 43 / COVER: 72,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+135,4371,43.12,43,Unincorporated local partnership/association/club,71,Herbaceuous,71,43,OWNER: 43 / COVER: 71,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+136,4352,43.11,43,Unincorporated local partnership/association/club,52,Shrub/Scrub,52,43,OWNER: 43 / COVER: 52,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+137,4351,,43,Unincorporated local partnership/association/club,51,Dwarf Scrub,51,43,OWNER: 43 / COVER: 51,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+138,4343,43.09,43,Unincorporated local partnership/association/club,43,Mixed Forest,43,43,OWNER: 43 / COVER: 43,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+139,4342,43.08,43,Unincorporated local partnership/association/club,42,Evergreen Forest,42,43,OWNER: 43 / COVER: 42,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+140,4341,43.07,43,Unincorporated local partnership/association/club,41,Deciduous Forest,41,43,OWNER: 43 / COVER: 41,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+141,4331,43.06,43,Unincorporated local partnership/association/club,31,Barren Land,31,43,OWNER: 43 / COVER: 31,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+142,4324,43.05,43,Unincorporated local partnership/association/club,24,"Developed, High Intensity",24,43,OWNER: 43 / COVER: 24,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+143,4323,43.04,43,Unincorporated local partnership/association/club,23,"Developed, Medium Intensity",23,43,OWNER: 43 / COVER: 23,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+144,4322,43.03,43,Unincorporated local partnership/association/club,22,"Developed, Low Intensity",22,43,OWNER: 43 / COVER: 22,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+145,4321,43.02,43,Unincorporated local partnership/association/club,21,"Developed, Open Space",21,43,OWNER: 43 / COVER: 21,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+146,4312,,43,Unincorporated local partnership/association/club,12,Perennial Ice/Snow,12,43,OWNER: 43 / COVER: 12,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+147,4311,43.01,43,Unincorporated local partnership/association/club,11,Open Water,11,43,OWNER: 43 / COVER: 11,water,0,ownership and cover data,3,2,Water
+148,4300,,43,Unincorporated local partnership/association/club,0,Unclassified,-1,43,OWNER: 43 / COVER: -1,other private non-forest,8,ownership data only,2,1,Non-Forest
+149,4295,42.16,42,Nongovernmental conservation/natural resources organization,95,Emergent Herbaceuous Wetlands,95,42,OWNER: 42 / COVER: 95,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+150,4290,42.15,42,Nongovernmental conservation/natural resources organization,90,Woody Wetlands,90,42,OWNER: 42 / COVER: 90,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+151,4282,42.14,42,Nongovernmental conservation/natural resources organization,82,Cultivated Crops,82,42,OWNER: 42 / COVER: 82,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+152,4281,42.13,42,Nongovernmental conservation/natural resources organization,81,Hay/Pasture,81,42,OWNER: 42 / COVER: 81,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+153,4274,,42,Nongovernmental conservation/natural resources organization,74,Moss,74,42,OWNER: 42 / COVER: 74,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+154,4273,,42,Nongovernmental conservation/natural resources organization,73,Lichens,73,42,OWNER: 42 / COVER: 73,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+155,4272,,42,Nongovernmental conservation/natural resources organization,72,Sedge/Herbaceous,72,42,OWNER: 42 / COVER: 72,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+156,4271,42.12,42,Nongovernmental conservation/natural resources organization,71,Herbaceuous,71,42,OWNER: 42 / COVER: 71,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+157,4252,42.11,42,Nongovernmental conservation/natural resources organization,52,Shrub/Scrub,52,42,OWNER: 42 / COVER: 52,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+158,4251,,42,Nongovernmental conservation/natural resources organization,51,Dwarf Scrub,51,42,OWNER: 42 / COVER: 51,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+159,4243,42.09,42,Nongovernmental conservation/natural resources organization,43,Mixed Forest,43,42,OWNER: 42 / COVER: 43,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+160,4242,42.08,42,Nongovernmental conservation/natural resources organization,42,Evergreen Forest,42,42,OWNER: 42 / COVER: 42,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+161,4241,42.07,42,Nongovernmental conservation/natural resources organization,41,Deciduous Forest,41,42,OWNER: 42 / COVER: 41,other private forest,7,ownership and cover data,3,4,Corporate/Other Private Forest
+162,4231,42.06,42,Nongovernmental conservation/natural resources organization,31,Barren Land,31,42,OWNER: 42 / COVER: 31,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+163,4224,42.05,42,Nongovernmental conservation/natural resources organization,24,"Developed, High Intensity",24,42,OWNER: 42 / COVER: 24,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+164,4223,42.04,42,Nongovernmental conservation/natural resources organization,23,"Developed, Medium Intensity",23,42,OWNER: 42 / COVER: 23,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+165,4222,42.03,42,Nongovernmental conservation/natural resources organization,22,"Developed, Low Intensity",22,42,OWNER: 42 / COVER: 22,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+166,4221,42.02,42,Nongovernmental conservation/natural resources organization,21,"Developed, Open Space",21,42,OWNER: 42 / COVER: 21,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+167,4212,,42,Nongovernmental conservation/natural resources organization,12,Perennial Ice/Snow,12,42,OWNER: 42 / COVER: 12,other private non-forest,8,ownership and cover data,3,1,Non-Forest
+168,4211,42.01,42,Nongovernmental conservation/natural resources organization,11,Open Water,11,42,OWNER: 42 / COVER: 11,water,0,ownership and cover data,3,2,Water
+169,4200,,42,Nongovernmental conservation/natural resources organization,0,Unclassified,-1,42,OWNER: 42 / COVER: -1,other private non-forest,8,ownership data only,2,1,Non-Forest
+170,4195,41.16,41,Corporate,95,Emergent Herbaceuous Wetlands,95,41,OWNER: 41 / COVER: 95,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+171,4190,41.15,41,Corporate,90,Woody Wetlands,90,41,OWNER: 41 / COVER: 90,corporate forest,1,ownership and cover data,3,4,Corporate/Other Private Forest
+172,4182,41.14,41,Corporate,82,Cultivated Crops,82,41,OWNER: 41 / COVER: 82,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+173,4181,41.13,41,Corporate,81,Hay/Pasture,81,41,OWNER: 41 / COVER: 81,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+174,4174,,41,Corporate,74,Moss,74,41,OWNER: 41 / COVER: 74,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+175,4173,,41,Corporate,73,Lichens,73,41,OWNER: 41 / COVER: 73,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+176,4172,,41,Corporate,72,Sedge/Herbaceous,72,41,OWNER: 41 / COVER: 72,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+177,4171,41.12,41,Corporate,71,Herbaceuous,71,41,OWNER: 41 / COVER: 71,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+178,4152,41.11,41,Corporate,52,Shrub/Scrub,52,41,OWNER: 41 / COVER: 52,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+179,4151,,41,Corporate,51,Dwarf Scrub,51,41,OWNER: 41 / COVER: 51,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+180,4143,41.09,41,Corporate,43,Mixed Forest,43,41,OWNER: 41 / COVER: 43,corporate forest,1,ownership and cover data,3,4,Corporate/Other Private Forest
+181,4142,41.08,41,Corporate,42,Evergreen Forest,42,41,OWNER: 41 / COVER: 42,corporate forest,1,ownership and cover data,3,4,Corporate/Other Private Forest
+182,4141,41.07,41,Corporate,41,Deciduous Forest,41,41,OWNER: 41 / COVER: 41,corporate forest,1,ownership and cover data,3,4,Corporate/Other Private Forest
+183,4131,41.06,41,Corporate,31,Barren Land,31,41,OWNER: 41 / COVER: 31,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+184,4124,41.05,41,Corporate,24,"Developed, High Intensity",24,41,OWNER: 41 / COVER: 24,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+185,4123,41.04,41,Corporate,23,"Developed, Medium Intensity",23,41,OWNER: 41 / COVER: 23,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+186,4122,41.03,41,Corporate,22,"Developed, Low Intensity",22,41,OWNER: 41 / COVER: 22,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+187,4121,41.02,41,Corporate,21,"Developed, Open Space",21,41,OWNER: 41 / COVER: 21,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+188,4112,,41,Corporate,12,Perennial Ice/Snow,12,41,OWNER: 41 / COVER: 12,corporate non-forest,2,ownership and cover data,3,1,Non-Forest
+189,4111,41.01,41,Corporate,11,Open Water,11,41,OWNER: 41 / COVER: 11,water,0,ownership and cover data,3,2,Water
+190,4100,,41,Corporate,0,Unclassified,-1,41,OWNER: 41 / COVER: -1,corporate non-forest,2,ownership data only,2,1,Non-Forest
+191,3295,32.16,32,"Local (county, municipal, etc.)",95,Emergent Herbaceuous Wetlands,95,32,OWNER: 32 / COVER: 95,public non-forest,10,ownership and cover data,3,1,Non-Forest
+192,3290,32.15,32,"Local (county, municipal, etc.)",90,Woody Wetlands,90,32,OWNER: 32 / COVER: 90,public forest,9,ownership and cover data,3,8,Local Forest
+193,3282,32.14,32,"Local (county, municipal, etc.)",82,Cultivated Crops,82,32,OWNER: 32 / COVER: 82,public non-forest,10,ownership and cover data,3,1,Non-Forest
+194,3281,32.13,32,"Local (county, municipal, etc.)",81,Hay/Pasture,81,32,OWNER: 32 / COVER: 81,public non-forest,10,ownership and cover data,3,1,Non-Forest
+195,3274,,32,"Local (county, municipal, etc.)",74,Moss,74,32,OWNER: 32 / COVER: 74,public non-forest,10,ownership and cover data,3,1,Non-Forest
+196,3273,,32,"Local (county, municipal, etc.)",73,Lichens,73,32,OWNER: 32 / COVER: 73,public non-forest,10,ownership and cover data,3,1,Non-Forest
+197,3272,,32,"Local (county, municipal, etc.)",72,Sedge/Herbaceous,72,32,OWNER: 32 / COVER: 72,public non-forest,10,ownership and cover data,3,1,Non-Forest
+198,3271,32.12,32,"Local (county, municipal, etc.)",71,Herbaceuous,71,32,OWNER: 32 / COVER: 71,public non-forest,10,ownership and cover data,3,1,Non-Forest
+199,3252,32.11,32,"Local (county, municipal, etc.)",52,Shrub/Scrub,52,32,OWNER: 32 / COVER: 52,public non-forest,10,ownership and cover data,3,1,Non-Forest
+200,3251,,32,"Local (county, municipal, etc.)",51,Dwarf Scrub,51,32,OWNER: 32 / COVER: 51,public non-forest,10,ownership and cover data,3,1,Non-Forest
+201,3243,32.09,32,"Local (county, municipal, etc.)",43,Mixed Forest,43,32,OWNER: 32 / COVER: 43,public forest,9,ownership and cover data,3,8,Local Forest
+202,3242,32.08,32,"Local (county, municipal, etc.)",42,Evergreen Forest,42,32,OWNER: 32 / COVER: 42,public forest,9,ownership and cover data,3,8,Local Forest
+203,3241,32.07,32,"Local (county, municipal, etc.)",41,Deciduous Forest,41,32,OWNER: 32 / COVER: 41,public forest,9,ownership and cover data,3,8,Local Forest
+204,3231,32.06,32,"Local (county, municipal, etc.)",31,Barren Land,31,32,OWNER: 32 / COVER: 31,public non-forest,10,ownership and cover data,3,1,Non-Forest
+205,3224,32.05,32,"Local (county, municipal, etc.)",24,"Developed, High Intensity",24,32,OWNER: 32 / COVER: 24,public non-forest,10,ownership and cover data,3,1,Non-Forest
+206,3223,32.04,32,"Local (county, municipal, etc.)",23,"Developed, Medium Intensity",23,32,OWNER: 32 / COVER: 23,public non-forest,10,ownership and cover data,3,1,Non-Forest
+207,3222,32.03,32,"Local (county, municipal, etc.)",22,"Developed, Low Intensity",22,32,OWNER: 32 / COVER: 22,public non-forest,10,ownership and cover data,3,1,Non-Forest
+208,3221,32.02,32,"Local (county, municipal, etc.)",21,"Developed, Open Space",21,32,OWNER: 32 / COVER: 21,public non-forest,10,ownership and cover data,3,1,Non-Forest
+209,3212,,32,"Local (county, municipal, etc.)",12,Perennial Ice/Snow,12,32,OWNER: 32 / COVER: 12,public non-forest,10,ownership and cover data,3,1,Non-Forest
+210,3211,32.01,32,"Local (county, municipal, etc.)",11,Open Water,11,32,OWNER: 32 / COVER: 11,water,0,ownership and cover data,3,2,Water
+211,3200,,32,"Local (county, municipal, etc.)",0,Unclassified,-1,32,OWNER: 32 / COVER: -1,public non-forest,10,ownership data only,2,1,Non-Forest
+212,3195,31.16,31,State,95,Emergent Herbaceuous Wetlands,95,31,OWNER: 31 / COVER: 95,public non-forest,10,ownership and cover data,3,1,Non-Forest
+213,3190,31.15,31,State,90,Woody Wetlands,90,31,OWNER: 31 / COVER: 90,public forest,9,ownership and cover data,3,7,State Forest
+214,3182,31.14,31,State,82,Cultivated Crops,82,31,OWNER: 31 / COVER: 82,public non-forest,10,ownership and cover data,3,1,Non-Forest
+215,3181,31.13,31,State,81,Hay/Pasture,81,31,OWNER: 31 / COVER: 81,public non-forest,10,ownership and cover data,3,1,Non-Forest
+216,3174,,31,State,74,Moss,74,31,OWNER: 31 / COVER: 74,public non-forest,10,ownership and cover data,3,1,Non-Forest
+217,3173,,31,State,73,Lichens,73,31,OWNER: 31 / COVER: 73,public non-forest,10,ownership and cover data,3,1,Non-Forest
+218,3172,,31,State,72,Sedge/Herbaceous,72,31,OWNER: 31 / COVER: 72,public non-forest,10,ownership and cover data,3,1,Non-Forest
+219,3171,31.12,31,State,71,Herbaceuous,71,31,OWNER: 31 / COVER: 71,public non-forest,10,ownership and cover data,3,1,Non-Forest
+220,3152,31.11,31,State,52,Shrub/Scrub,52,31,OWNER: 31 / COVER: 52,public non-forest,10,ownership and cover data,3,1,Non-Forest
+221,3151,,31,State,51,Dwarf Scrub,51,31,OWNER: 31 / COVER: 51,public non-forest,10,ownership and cover data,3,1,Non-Forest
+222,3143,31.09,31,State,43,Mixed Forest,43,31,OWNER: 31 / COVER: 43,public forest,9,ownership and cover data,3,7,State Forest
+223,3142,31.08,31,State,42,Evergreen Forest,42,31,OWNER: 31 / COVER: 42,public forest,9,ownership and cover data,3,7,State Forest
+224,3141,31.07,31,State,41,Deciduous Forest,41,31,OWNER: 31 / COVER: 41,public forest,9,ownership and cover data,3,7,State Forest
+225,3131,31.06,31,State,31,Barren Land,31,31,OWNER: 31 / COVER: 31,public non-forest,10,ownership and cover data,3,1,Non-Forest
+226,3124,31.05,31,State,24,"Developed, High Intensity",24,31,OWNER: 31 / COVER: 24,public non-forest,10,ownership and cover data,3,1,Non-Forest
+227,3123,31.04,31,State,23,"Developed, Medium Intensity",23,31,OWNER: 31 / COVER: 23,public non-forest,10,ownership and cover data,3,1,Non-Forest
+228,3122,31.03,31,State,22,"Developed, Low Intensity",22,31,OWNER: 31 / COVER: 22,public non-forest,10,ownership and cover data,3,1,Non-Forest
+229,3121,31.02,31,State,21,"Developed, Open Space",21,31,OWNER: 31 / COVER: 21,public non-forest,10,ownership and cover data,3,1,Non-Forest
+230,3112,,31,State,12,Perennial Ice/Snow,12,31,OWNER: 31 / COVER: 12,public non-forest,10,ownership and cover data,3,1,Non-Forest
+231,3111,31.01,31,State,11,Open Water,11,31,OWNER: 31 / COVER: 11,water,0,ownership and cover data,3,2,Water
+232,3100,,31,State,0,Unclassified,-1,31,OWNER: 31 / COVER: -1,public non-forest,10,ownership data only,2,1,Non-Forest
+233,2595,25.16,25,Federal,95,Emergent Herbaceuous Wetlands,95,25,OWNER: 25 / COVER: 95,public non-forest,10,ownership and cover data,3,1,Non-Forest
+234,2590,25.15,25,Federal,90,Woody Wetlands,90,25,OWNER: 25 / COVER: 90,public forest,9,ownership and cover data,3,6,Federal Forest
+235,2582,25.14,25,Federal,82,Cultivated Crops,82,25,OWNER: 25 / COVER: 82,public non-forest,10,ownership and cover data,3,1,Non-Forest
+236,2581,25.13,25,Federal,81,Hay/Pasture,81,25,OWNER: 25 / COVER: 81,public non-forest,10,ownership and cover data,3,1,Non-Forest
+237,2574,,25,Federal,74,Moss,74,25,OWNER: 25 / COVER: 74,public non-forest,10,ownership and cover data,3,1,Non-Forest
+238,2573,,25,Federal,73,Lichens,73,25,OWNER: 25 / COVER: 73,public non-forest,10,ownership and cover data,3,1,Non-Forest
+239,2572,,25,Federal,72,Sedge/Herbaceous,72,25,OWNER: 25 / COVER: 72,public non-forest,10,ownership and cover data,3,1,Non-Forest
+240,2571,25.12,25,Federal,71,Herbaceuous,71,25,OWNER: 25 / COVER: 71,public non-forest,10,ownership and cover data,3,1,Non-Forest
+241,2552,25.11,25,Federal,52,Shrub/Scrub,52,25,OWNER: 25 / COVER: 52,public non-forest,10,ownership and cover data,3,1,Non-Forest
+242,2551,,25,Federal,51,Dwarf Scrub,51,25,OWNER: 25 / COVER: 51,public non-forest,10,ownership and cover data,3,1,Non-Forest
+243,2543,25.09,25,Federal,43,Mixed Forest,43,25,OWNER: 25 / COVER: 43,public forest,9,ownership and cover data,3,6,Federal Forest
+244,2542,25.08,25,Federal,42,Evergreen Forest,42,25,OWNER: 25 / COVER: 42,public forest,9,ownership and cover data,3,6,Federal Forest
+245,2541,25.07,25,Federal,41,Deciduous Forest,41,25,OWNER: 25 / COVER: 41,public forest,9,ownership and cover data,3,6,Federal Forest
+246,2531,25.06,25,Federal,31,Barren Land,31,25,OWNER: 25 / COVER: 31,public non-forest,10,ownership and cover data,3,1,Non-Forest
+247,2524,25.05,25,Federal,24,"Developed, High Intensity",24,25,OWNER: 25 / COVER: 24,public non-forest,10,ownership and cover data,3,1,Non-Forest
+248,2523,25.04,25,Federal,23,"Developed, Medium Intensity",23,25,OWNER: 25 / COVER: 23,public non-forest,10,ownership and cover data,3,1,Non-Forest
+249,2522,25.03,25,Federal,22,"Developed, Low Intensity",22,25,OWNER: 25 / COVER: 22,public non-forest,10,ownership and cover data,3,1,Non-Forest
+250,2521,25.02,25,Federal,21,"Developed, Open Space",21,25,OWNER: 25 / COVER: 21,public non-forest,10,ownership and cover data,3,1,Non-Forest
+251,2512,,25,Federal,12,Perennial Ice/Snow,12,25,OWNER: 25 / COVER: 12,public non-forest,10,ownership and cover data,3,1,Non-Forest
+252,2511,25.01,25,Federal,11,Open Water,11,25,OWNER: 25 / COVER: 11,water,0,ownership and cover data,3,2,Water
+253,2500,,25,Federal,0,Unclassified,-1,25,OWNER: 25 / COVER: -1,public non-forest,10,ownership data only,2,1,Non-Forest
