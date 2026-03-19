@@ -31,8 +31,8 @@ VOCAB_PATH = _THIS_DIR / "model_dict.pkl"
 # ------------------------------------------------------------------------------
 # NLTK resources (mirror legacy behavior)
 # ------------------------------------------------------------------------------
-nltk.download("punkt")
-nltk.download("punkt_tab")
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
 
 class Trace:
     def __init__(self, enabled: bool = False):
@@ -1188,7 +1188,7 @@ def classify_owner(
                     "state",
                     reason="empty_tokenized_owner",
                 )
-                
+
             # -------------------------
             # HARD FALLBACK (UNKNOWN)
             # -------------------------
