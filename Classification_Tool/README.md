@@ -5,7 +5,6 @@ Command-line interface for classifying ownership records using the rule-based + 
 
 Supports:
 - Single record classification
-- Batch CSV classification
 - Optional debug tracing
 
 ---
