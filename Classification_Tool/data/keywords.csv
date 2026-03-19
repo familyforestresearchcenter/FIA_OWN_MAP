@@ -1,0 +1,123 @@
+,junior_keywords,NameCleaner,biz_word_drop,trust_kw,corp_keywords,government_keywords,government_keywords_plus,federal_kw,state_kw,rel_key_words,farms_keywords,ckw,kw42,kw43
+"This wordbank is used in the initial classification stage within the Name_Matching script. It primirily serves to isolate language that isn't indivudals. If a ownership name contains a word in keywords, it is labeled 'other' within the name matching script. ",This wordbank is used in the initial classification stage within the Name Matching Script. It isolates any record that may be  a junior. This splits juniors from their fathers and allows them to be considered individual owners. ,This is used in the name standardization stage within the Name Matching script. These keywords represt prefixes and titles that need to be dropped from the names. This list could be added to. ,"This keyword bank is used in the 'other' name matching stage of the Name Matching script. Businesses share a lot of component parts in their names and was causing false matches. By removing the ubiquitous component parts, the the issue was mitigated. Can be added too. ",This keyword bank is used to isolate family trusts within the Classify_Unknowns script. I found the phrasing of trust was inconsistent and had to add common abbreviations if found in the deleware record. ,This keyword bank is used to spefically isolate some of the corporate language in the Calssify script. This list was derived from an internal review of the DE record to pull out common language across recods. Could and SHOULD be added to. ,This keyword bank is used to isolate the public records in the dataset. They will get further subclassed later in teh script.,This keyword bank is to remove any of the following records containg one of these keywords from teh previous government selection. Government cannot cantian words from this list. COuld and Should be added to. ,keywords associated with federal ownership,keywords associated with state ownership,This keyword bank is used to isolate religious groups in the classify script. This was arbitrarily dervived from lists of common religious organizations. This could and SHOULD be added to.,This keyword bank is used to help isolate family farms from corporate farms in the classify script. ,"This is another corporate script that explicitly calls out owners in the classify script. The previous corp keyword bank was generic, this is explicit, but they function the same way. ",This keyword bank is used to isolate 42s in the classify script. It could and should be added to.,This keyword bank is used to isolate 43s in the classify script. It could and should be added to.
+ BANK ', JR ,TTEE', CORP','revocable', BANK ',state ,' BANK ',national forest', state',' Adventist ',' family ','Rayonier','Nature Conservancy','YMCA'
+' CORP', JR. ,'DR. ',' LLC','living',CORPORATION',county ,' CORP',national park', state college',' Baptist ',' brother ','Weyerhaeuser','Nature','YWCA'
+' LLC', Jr ,'MR. ',' INC','family','PARTICIPATION',federal ,'PARTICIPATION',wildlife refuge', state university',' Brethren ',' son ','Plum Creek','Conservancy','Boys Scouts'
+' INC', Jr. ,MS. ',' LTD',' rev tr of',PROPERTIES',government,' TRUST',USA',commonwealth,' Catholic ', daughter ',FIA','Wild Lands','Girls Scouts'
+' LTD', jr ,' MRS. ',' HRS',' revoc trust','ASSOCIATIONS',city of ,' TRUS',United States',,'Christian Church',,Forest Investment Associates',Wildlands',Scouts of America'
+' HRS', jr. ,'CAPTAIN','MGT',' revoc ',ASSOCIATES',town of ,' CO ',U.S. Department of Agriculture,,' Church of ',,Allagash,'Land Trust',Scouts'
+'MGT', JR,'CPT.',' OF ', rev tr of ', ASSOCI',township, LP ' ,U.S. Forest Service,,' Episcopal ',,Alawest,Audubon',Rod*Gun'
+'CORPORATION', JR.,'PROF ',' CO ',,'MAINTENANCE',department,' CHURCH',U.S. Fish and Wildlife,,' Anglican ',,Amsouth,land preservation',game club'
+'PARTICIPATION', Jr,'REV. COACH ',' LP',,'MAINTENANC',bureau,' CLUB',Interior,,' Lutheran ',,Blandin,watershed trust',landowner association'
+ TRUST', Jr.,'PROFESSOR ',' MGMT',,'TELEPHONE',national forest,'BAPTIST',Bureau of Land Management,,' Mennonite ',,Campbell Global,heritage trust',hunting club'
+' TRUS', jr,REVEREND ', STE ',,ELECTRIC',national park,'EVANGELICAL',national park service,,' Methodist ',,Catchmark,trust for public land',fishing club'
+ CO ', jr.,'SIR ',' L L C',,'ENTERPRISES',wildlife refuge,'METHODIST',department of defense,,' Moravian ',,green diamond,wildlife sanctuary',hunting association'
+ LP', II ,LT. ',' L P',,ENTERPRISE',USA,'CATHOLIC',department of energy,,'Mormon ',,hancock forest',nature center',angling association'
+UNIVERSITY', III ,'SGT. ',,,'INTERNATIONAL',United States,'PROPERTIES',federal',,' Nazarene ',,hancock timber',,beagling'
+'COLLEGE', IV ,'SR. ',,,' OFFICE',state college,'ASSOCIATIONS',national monument,,' Orthodox ',,international paper',,motorcycle club'
+' CHURCH',,Miss',,,'INVESTMENT',public college,'ASSOCIATES',US GOVT,,'Pentecostal ',,meadwestvaco,,motorcycle assoc'
+STATE',,,,,HOLDINGS,state university,' ASSOCI',UNITED STATES,,' Presbyterian ',,molpus,, club '
+' CLUB',,,,,' INN',public university,'SOCIETY',UNITED STATES DEPARTMENT,,' Reformed Church ',,potlatch,,landowners association
+BAPTISI',,,,,'ASSOCIATION',USDA,'MAINTENANCE',FEDERAL,,'Spiritualist ',,timbervest,,landowners assoc
+'EVANGELICAL',,,,,'ACCOUNTING',U.S. Department of Agriculture,'MAINTENANC',DEPT OF INTERIOR,,' Mosques ',,WORLDMARK,,homeowners club
+'METHODIST',,,,,MAINTEN',U.S. Forest Service,'ENTERPRISES',DEPARTMENT OF THE INTERIOR,,' Islamic Center ',,MERGENTHALER,,homeowners assoc
+'CATHOLIC',,,,,'PRODUCT',U.S. Fish and Wildlife,'ENTERPRISE',US DOI,,' Mosque ',,,,hunt club
+'PROPERTIES',,,,,'MUTUAL',fish and wildlife,'AUTHORITY',BUREAU OF LAND MANAGEMENT,,' Masjid ',,,,hunt assoc
+ASSOCIATIONS',,,,,' ESTATES',Interior,'HOMEOWNERS',NATIONAL PARK SERVICE,,' Synagogues ',,,,camping club
+'ASSOCIATES',,,,, & SONS',Bureau of Land Management,'INTERNATIONAL',PARK SERVICE,,' Temple ',,,,sportsmans club
+' ASSOCI',,,,,'FINANCE', BLM,'INVESTMENT',US FOREST SERVICE,,' Congregation ',,,,sportsmans assoc
+'SOCIETY',,,,,' TITLE',national park service,' HOME',FOREST SERVICE,,' of bethlehem ',,,,beagle club
+'MAINTENANCE',,,,,'WIRELESS',department of defense,' MGMT',FISH AND WILDLIFE SERVICE,,'kingdom of god',,,,condo assoc
+'MAINTENANC',,,,,'COMMUNICATION', DOD,' PRESBYTERIAN',UNITED STATES DEPT OF AGRICULTURE,,'christian*church',,,,community assoc
+TELEPHONE',,,,,'BAR & GRILL',department of energy,' INN',US DEPT OF TRANSPORTATION,, Christian fellowship',,,,blood center
+ELECTRIC',,,,,' CTR', DOE,'ASSOCIATION',ARMY CORPS OF ENGINEERS,,ministries,,,,blood ctrs
+'ENTERPRISES',,,,,' LOAN',USFS,' STE ',CORPS OF ENGINEERS,,latter-day saints,,,,HOMEOWNERS
+'ENTERPRISE',,,,,SPECIALTIES',national monument,'ACCOUNTING',BUREAU OF INDIAN AFFAIRS,,EVANGELISTIC,,,,HOUSING AUTHORITY
+AUTHORITY',,,,,'BRANDS',commonwealth,'MAINTEN',ENVIRONMENTAL PROTECTION AGENCY,,Of God,,,,
+HOMEOWNERS',,,,,' UNITEDCREDIT',B L M,'PRODUCT',HOMELAND SECURITY,,,,,,
+'INTERNATIONAL',,,,,' UNION',BL M,'MUTUAL',NATIONAL OCEANIC AND ATMOSPHERIC,,,,,,
+' MINISTRY',,,,,'CORPORATE',B LM,'ESTATES',US MARSHALS,,,,,,
+ OFFICE',,,,,'TREASURER',GOVERNMENT,'PARTNER',US DEPT,,,,,,
+'INVESTMENT',,,,,' ADMIN',GOVT,' & SONS',US DEPT OF INTERIOR,,,,,,
+ HOME',,,,,UTILITIES',DEPT,'FINANCE',PARK SERVICE,,,,,,
+' MGMT',,,,,COMMERCIAL',DEPARTMENT,' TITLE',NATL PARK,,,,,,
+' PRESBYTERIAN',,,,,' STORAGE',AGENCY,' L P ',U S FOREST,,,,,,
+ INN',,,,,'REAL ESTATE',AUTHORITY,' FARM',bureau,,,,,,
+'ASSOCIATION',,,,,'CREDIT UNION',CITY OF,'WIRELESS',,,,,,,
+ STE ',,,,,'AND SONS',TOWN OF,'COMMUNICATION',,,,,,,
+ L L C',,,,,timberlands,COUNTY,' SERVICE',,,,,,,
+ACCOUNTING',,,,,global,SCHOOL DISTRICT,'BAR & GRILL',,,,,,,
+'MAINTEN',,,,,realty,METROPOLITAN DISTRICT,' CTR ',,,,,,,
+PRODUCT',,,,,lumber,WATER DISTRICT,' LOAN',,,,,,,
+'MUTUAL',,,,,growth,STATE,SPECIALTIES',,,,,,,
+'ESTATES',,,,,value,COMMONWEALTH,'BRANDS',,,,,,,
+'PARTNER',,,,,packaging,US DEPT,'CREDIT',,,,,,,
+ & SONS',,,,,paper co',US DEPT OF INTERIOR,'CORPORATE',,,,,,,
+'FINANCE',,,,,paper company',PARK SERVICE,'TREASURER',,,,,,,
+' TITLE',,,,,Company,NATL PARK,' ADMIN',,,,,,,
+' L P',,,,,Golf Club,INTR,'UTILITIES',,,,,,,
+ FARM',,,,,Mortgage,NPS,'COMMERCIAL',,,,,,,
+'WIRELESS',,,,,INVESTMENTS',US DEPT INTR NATL PARK SERVICE,' STORAGE',,,,,,,
+'COMMUNICATION',,,,,,national forest,'FAMILY',,,,,,,
+' SERVICE',,,,,,national park,,,,,,,,
+'BAR & GRILL',,,,,,wildlife refuge,,,,,,,,
+' CTR',,,,,,USA,,,,,,,,
+ LOAN',,,,,,United States,,,,,,,,
+SPECIALTIES',,,,,,USDA,,,,,,,,
+BRANDS',,,,,,U.S. Department of Agriculture,,,,,,,,
+' UNITED',,,,,,U.S. Forest Service,,,,,,,,
+CREDIT',,,,,,U.S. Fish and Wildlife,,,,,,,,
+ UNION',,,,,,Interior,,,,,,,,
+CORPORATE',,,,,,Bureau of Land Management,,,,,,,,
+'TREASURER',,,,,,USDI,,,,,,,,
+' ADMIN',,,,,,national park service,,,,,,,,
+'UTILITIES',,,,,,department of defense,,,,,,,,
+'COMMERCIAL',,,,,,federal,,,,,,,,
+' STORAGE',,,,,,USFS,,,,,,,,
+'FAMILY',,,,,,national monument,,,,,,,,
+AND SONS',,,,,,B L M,,,,,,,,
+,,,,,,BL M,,,,,,,,
+,,,,,,B LM,,,,,,,,
+,,,,,,US GOVT,,,,,,,,
+,,,,,,UNITED STATES,,,,,,,,
+,,,,,,UNITED STATES DEPARTMENT,,,,,,,,
+,,,,,,FEDERAL,,,,,,,,
+,,,,,,DEPT OF INTERIOR,,,,,,,,
+,,,,,,DEPARTMENT OF THE INTERIOR,,,,,,,,
+,,,,,,DOI,,,,,,,,
+,,,,,,US DOI,,,,,,,,
+,,,,,,BUREAU OF LAND MANAGEMENT,,,,,,,,
+,,,,,,BLM,,,,,,,,
+,,,,,,NATIONAL PARK SERVICE,,,,,,,,
+,,,,,,NPS,,,,,,,,
+,,,,,,PARK SERVICE,,,,,,,,
+,,,,,,USFS,,,,,,,,
+,,,,,,US FOREST SERVICE,,,,,,,,
+,,,,,,FOREST SERVICE,,,,,,,,
+,,,,,,FISH AND WILDLIFE SERVICE,,,,,,,,
+,,,,,,FWS,,,,,,,,
+,,,,,,USFWS,,,,,,,,
+,,,,,,USDA,,,,,,,,
+,,,,,,UNITED STATES DEPT OF AGRICULTURE,,,,,,,,
+,,,,,,US DEPT OF TRANSPORTATION,,,,,,,,
+,,,,,,DOT,,,,,,,,
+,,,,,,ARMY CORPS OF ENGINEERS,,,,,,,,
+,,,,,,CORPS OF ENGINEERS,,,,,,,,
+,,,,,,USACE,,,,,,,,
+,,,,,,BUREAU OF INDIAN AFFAIRS,,,,,,,,
+,,,,,,BIA,,,,,,,,
+,,,,,,ENVIRONMENTAL PROTECTION AGENCY,,,,,,,,
+,,,,,,EPA,,,,,,,,
+,,,,,,HOMELAND SECURITY,,,,,,,,
+,,,,,,DHS,,,,,,,,
+,,,,,,NOAA,,,,,,,,
+,,,,,,NATIONAL OCEANIC AND ATMOSPHERIC,,,,,,,,
+,,,,,,US MARSHALS,,,,,,,,
+,,,,,,FBI,,,,,,,,
+,,,,,,US DEPT,,,,,,,,
+,,,,,,US DEPT OF INTERIOR,,,,,,,,
+,,,,,,PARK SERVICE,,,,,,,,
+,,,,,,NATL PARK,,,,,,,,
+,,,,,,INTR,,,,,,,,
+,,,,,,NPS,,,,,,,,
+,,,,,,U S FOREST,,,,,,,,
