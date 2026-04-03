@@ -15,6 +15,7 @@ from nltk.stem import PorterStemmer
 from sklearn.feature_extraction import text
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import lil_matrix
+
 import numpy as np
 
 from configs import *
@@ -45,17 +46,6 @@ class Trace:
         rec = {"stage": stage, "event": event}
         rec.update(fields)
         self.events.append(rec)
-
-def chunks_generator(in_counts, n_keys, x_idx, y_idx, chunk_size):
-    size_counts = in_counts.shape[0]
-    rows = chunk_size
-    cols = n_keys
-    for pos in range(0, size_counts - chunk_size, chunk_size):
-        curr_counts = in_counts[pos:pos + chunk_size, y_idx]
-        model_sparse = lil_matrix((rows, cols))
-        model_sparse[:, x_idx] = curr_counts
-        yield model_sparse
-
 
 def get_corp(simple_owner: str | None, wrd_list):
     text = simple_owner or ""
@@ -1116,7 +1106,7 @@ def classify_owner(
             )
 
             # -------------------------
-            # Random forest fallback
+            # Random forest fallback (CORRECTED)
             # -------------------------
 
             # replicate legacy tokenization
@@ -1133,17 +1123,15 @@ def classify_owner(
             if tokenized_owner and tokenized_owner.strip():
 
                 try:
-                    # load trained artifacts FIRST
+                    # load trained artifacts
                     model = load_model(VOCAB_PATH)          # dict vocab
                     classify_model = load_model(MODEL_PATH) # RF model
 
                     model_key = np.sort(list(model.keys()))
 
-                    # IMPORTANT: use fixed vocab
-                    vectorizer = TfidfVectorizer(vocabulary=model)
-
-                    # use transform, not fit_transform
-                    counts = vectorizer.transform([tokenized_owner])
+                    # IMPORTANT: FIT vectorizer like production (not transform-only)
+                    vectorizer = TfidfVectorizer()
+                    counts = vectorizer.fit_transform([tokenized_owner])
                     counts_key = vectorizer.get_feature_names_out()
 
                     # align feature spaces exactly like legacy
@@ -1157,47 +1145,57 @@ def classify_owner(
                     model_sparse = lil_matrix((1, model_key.shape[0]))
 
                     if len(x_ind) > 0:
+                        # normal path: overlap exists
                         model_sparse[:, x_ind] = counts[:, y_ind]
 
-                        prediction = classify_model.predict(model_sparse)[0]
-                        Own_Type = int(prediction)
-
                         trace.add(
-                            "46_other_after_model_predictions",
-                            "assign",
-                            own_type=Own_Type,
-                            reason="random_forest_model",
+                            "47_rf_vocab_overlap",
+                            "state",
+                            overlap_count=len(x_ind),
                         )
                     else:
+                        # IMPORTANT: match production behavior
+                        # still predict using zero vector
                         trace.add(
-                            "46_rf_no_vocab_overlap",
+                            "48_rf_no_vocab_overlap",
                             "state",
-                            reason="no_shared_tokens_with_model_vocab",
+                            reason="no_shared_tokens_with_model_vocab_zero_vector_used",
                         )
+
+                    # ALWAYS predict (matches production)
+                    prediction = classify_model.predict(model_sparse)[0]
+                    Own_Type = int(prediction)
+
+                    trace.add(
+                        "49_other_after_model_predictions",
+                        "assign",
+                        own_type=Own_Type,
+                        reason="random_forest_model",
+                    )
 
                 except Exception as e:
                     trace.add(
-                        "46_rf_error",
+                        "50_rf_error",
                         "state",
                         error=str(e),
                     )
 
             else:
                 trace.add(
-                    "45_rf_skipped_empty",
+                    "51_rf_skipped_empty",
                     "state",
                     reason="empty_tokenized_owner",
                 )
 
             # -------------------------
-            # HARD FALLBACK (UNKNOWN)
+            # HARD FALLBACK (UNKNOWN) — KEEP THIS
             # -------------------------
 
             if Own_Type is None:
                 Own_Type = -99  # explicit unknown
 
                 trace.add(
-                    "46_rf_fallback_unknown",
+                    "52_rf_fallback_unknown",
                     "assign",
                     own_type=Own_Type,
                     reason="rf_failed_unknown",
@@ -1208,7 +1206,7 @@ def classify_owner(
     # -------------------------
 
     trace.add(
-        "47_pre_gov_subclassify",
+        "53_pre_gov_subclassify",
         "state",
         own_type=Own_Type,
     )
@@ -1253,7 +1251,7 @@ def classify_owner(
     fed_match, kw = get_gov_row(own1, own2, federal_patterns)
 
     trace.add(
-        "48_fed_gov_check",
+        "54_fed_gov_check",
         "check",
         rule="federal_keywords",
         keyword=kw,
@@ -1264,7 +1262,7 @@ def classify_owner(
         Own_Type = 25
 
         trace.add(
-            "49_fed_gov",
+            "55_fed_gov",
             "assign",
             own_type=25,
             reason="federal_keyword_match",
@@ -1321,7 +1319,7 @@ def classify_owner(
     local_match, kw = get_gov_row(own1, own2, local_keywords)
 
     trace.add(
-        "50_local_gov_check",
+        "56_local_gov_check",
         "check",
         rule="local_keywords",
         keyword=kw,
@@ -1332,7 +1330,7 @@ def classify_owner(
         Own_Type = 32
 
         trace.add(
-            "51_local_gov",
+            "57_local_gov",
             "assign",
             own_type=32,
             reason="local_keyword_match",
@@ -1373,7 +1371,7 @@ def classify_owner(
     state_match, kw = get_gov_row(own1, own2, state_keywords)
 
     trace.add(
-        "52_state_gov_check",
+        "58_state_gov_check",
         "check",
         rule="state_keywords",
         keyword=kw,
@@ -1384,7 +1382,7 @@ def classify_owner(
         Own_Type = 31
 
         trace.add(
-            "52_state_gov",
+            "59_state_gov",
             "assign",
             own_type=31,
             reason="state_keyword_match",
@@ -1399,7 +1397,7 @@ def classify_owner(
     Own_Type = 32
 
     trace.add(
-        "53_remaining_gov_as_local",
+        "60_remaining_gov_as_local",
         "assign",
         own_type=32,
         reason="gov_fallback_local",
