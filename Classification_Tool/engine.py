@@ -47,6 +47,58 @@ class Trace:
         rec.update(fields)
         self.events.append(rec)
 
+
+PERSON_FAST_PATH_EXCLUSION_PATTERNS = [
+    r"\bLLC\b", r"\bL\.?L\.?C\.?\b",
+    r"\bINC\b", r"\bINCORPORATED\b",
+    r"\bCORP\b", r"\bCORPORATION\b",
+    r"\bCOMPANY\b", r"\bCO\b",
+    r"\bLTD\b", r"\bLIMITED\b",
+    r"\bLP\b", r"\bL\.?P\.?\b",
+    r"\bLLP\b", r"\bPLC\b",
+    r"\bTRUST\b", r"\bBANK\b",
+    r"\bPROPERT(Y|IES)\b",
+    r"\bHOLDINGS?\b",
+    r"\bINVESTMENTS?\b",
+    r"\bREAL ESTATE\b",
+    r"\bDEPARTMENT\b", r"\bDEPT\b",
+    r"\bSTATE\b", r"\bCITY\b", r"\bCOUNTY\b",
+    r"\bBOARD\b", r"\bDISTRICT\b",
+    r"\bAUTHORITY\b", r"\bASSOCIATION\b",
+    r"\bCHURCH\b", r"\bMINISTR(Y|IES)\b",
+    r"\bUNIVERSITY\b", r"\bCOLLEGE\b",
+    r"\bSCHOOL\b", r"\bCLUB\b",
+    r"\bCONSERVANCY\b", r"\bGOVERNMENT\b",
+    r"\bNATION\b", r"\bTRIBE\b",
+    r"\bUNITED STATES\b", r"\bUSA\b", r"\bUSDA\b",
+]
+PERSON_FAST_PATH_EXCLUSION_REGEX = re.compile(
+    "|".join(PERSON_FAST_PATH_EXCLUSION_PATTERNS),
+    re.IGNORECASE,
+)
+HOUSING_AUTHORITY_REGEX = re.compile(r"\bHOUSING AUTHORITY\b", re.IGNORECASE)
+HOUSING_AUTHORITY_EXCLUSION_REGEX = re.compile(
+    r"\bNATION\b|\bTRIB(E|AL)\b|\bFRIEND\b|\bALLIANCE\b|\bCOMMUNITY HOUSING AUTHORITY\b",
+    re.IGNORECASE,
+)
+AUDUBON_REGEX = re.compile(r"\bAUDUBON\b", re.IGNORECASE)
+AUDUBON_42_REGEX = re.compile(
+    r"\bAUDUBON SOCIETY\b|\bNATIONAL AUDUBON\b|\bAUDUBON SANCTUARY\b",
+    re.IGNORECASE,
+)
+AUDUBON_32_REGEX = re.compile(
+    r"\bCITY OF AUDUBON\b|\bBOROUGH OF AUDUBON\b|\bCITY OF AUDUBON PARK\b",
+    re.IGNORECASE,
+)
+AUDUBON_43_REGEX = re.compile(
+    r"\bHOMEOWNERS?\b|\bASSOCIATION\b|\bASSOC\b|\bCHURCH\b|\bCOUNTRY CLUB\b|\bCLUB\b",
+    re.IGNORECASE,
+)
+AUDUBON_41_REGEX = re.compile(
+    r"\bLLC\b|\bINC\b|\bCORP\b|\bPROPERT(Y|IES)\b|\bHOLDINGS?\b|\bINVESTMENTS?\b|\bAUDUBON ST\b",
+    re.IGNORECASE,
+)
+
 def get_corp(simple_owner: str | None, wrd_list):
     text = simple_owner or ""
 
@@ -66,10 +118,23 @@ def get_gov_row(own1: str | None, own2: str | None, wrd_list):
     for kw in wrd_list:
         pattern = re.compile(kw, flags=re.IGNORECASE)
 
-        if re.search(pattern, own1) or re.search(pattern, own2):
-            return True, kw  # matched, keyword that triggered
+        m1 = re.search(pattern, own1)
+        if m1:
+            return True, {
+                "keyword": kw,
+                "source": "own1",
+                "match": m1.group(0),
+            }
 
-    return False, None  # unmatched
+        m2 = re.search(pattern, own2)
+        if m2:
+            return True, {
+                "keyword": kw,
+                "source": "own2",
+                "match": m2.group(0),
+            }
+
+    return False, None
 
 
 def preprocess_simple_owner(text: str | None) -> str:
@@ -86,6 +151,29 @@ def filEmptyStringsInOwners(simple_owner: str | None, own1: str | None):
     if simple_owner is None or simple_owner == "":
         return own1 if own1 not in (None, "") else simple_owner
     return simple_owner
+
+
+def is_likely_person_owner(text: str | None) -> bool:
+    if not text:
+        return False
+
+    if re.search(r"\d", text):
+        return False
+
+    if PERSON_FAST_PATH_EXCLUSION_REGEX.search(text):
+        return False
+
+    normalized = normalize_unicode_to_ascii(text).upper()
+    tokens = [token for token in normalized.split() if token]
+
+    if len(tokens) < 2 or len(tokens) > 6:
+        return False
+
+    letter_tokens = [token for token in tokens if token.isalpha()]
+    if len(letter_tokens) < 2:
+        return False
+
+    return True
 
 def iso_biz(own1: str | None, own2: str | None):
     own1 = own1 or ""
@@ -166,6 +254,10 @@ def generate_combinations(name_tuple):
 
 def preprocess_names(owner: str | None):
     owner = owner or ""
+
+    NamesExpander.update({
+        r"\bCTY\b": "COUNTY",
+    })
 
     # legacy: regex replace using pattern derived from list
     pattern = create_regex_pattern_from_list(NameCleaner + biz_word_drop)
@@ -347,6 +439,84 @@ def classify_owner(
         )
         return Own_Type, trace
 
+    paired_person_family = (
+        bool((own2 or "").strip())
+        and is_likely_person_owner(own1)
+        and is_likely_person_owner(own2)
+    )
+
+    trace.add(
+        "06_paired_person_check",
+        "check",
+        rule="paired_person_fast_path",
+        result=paired_person_family,
+    )
+
+    if paired_person_family:
+        Own_Type = 45
+        trace.add(
+            "06_paired_person_family",
+            "assign",
+            own_type=45,
+            reason="paired_person_fast_path",
+        )
+        return Own_Type, trace
+
+    housing_authority_match = HOUSING_AUTHORITY_REGEX.search(own1 or "") or HOUSING_AUTHORITY_REGEX.search(own2 or "")
+    housing_authority_excluded = (
+        HOUSING_AUTHORITY_EXCLUSION_REGEX.search(own1 or "") is not None
+        or HOUSING_AUTHORITY_EXCLUSION_REGEX.search(own2 or "") is not None
+    )
+
+    trace.add(
+        "06_housing_authority_check",
+        "check",
+        rule="housing_authority_phrase",
+        result=bool(housing_authority_match),
+        excluded=housing_authority_excluded,
+    )
+
+    if housing_authority_match and not housing_authority_excluded:
+        Own_Type = 32
+        trace.add(
+            "06_housing_authority_local",
+            "assign",
+            own_type=32,
+            reason="housing_authority_phrase",
+        )
+        return Own_Type, trace
+
+    audubon_present = AUDUBON_REGEX.search(own1 or "") or AUDUBON_REGEX.search(own2 or "")
+    audubon_text = f"{own1 or ''} {own2 or ''}"
+    audubon_target = None
+
+    if audubon_present:
+        if AUDUBON_42_REGEX.search(audubon_text):
+            audubon_target = 42
+        elif AUDUBON_32_REGEX.search(audubon_text):
+            audubon_target = 32
+        elif AUDUBON_43_REGEX.search(audubon_text):
+            audubon_target = 43
+        elif AUDUBON_41_REGEX.search(audubon_text):
+            audubon_target = 41
+
+    trace.add(
+        "06_audubon_check",
+        "check",
+        rule="audubon_phrase_router",
+        result=audubon_target is not None,
+        own_type=audubon_target,
+    )
+
+    if audubon_target is not None:
+        trace.add(
+            "06_audubon_route",
+            "assign",
+            own_type=audubon_target,
+            reason="audubon_phrase_router",
+        )
+        return audubon_target, trace
+
     # -------------------------
     # Trust detection
     # -------------------------
@@ -468,11 +638,9 @@ def classify_owner(
         kw42_local = [
             # --- Existing canonical orgs ---
             r'\bNATURE CONSERVANCY\b',
-            r'\bNATURE\b',
             r'\bCONSERVANCY\b',
             r'\bWILD LANDS?\b',
             r'\bLAND TRUST\b',
-            r'\bAUDUBON\b', #I may want to remove this, it causes a ton of false hits
             r'\bWATERSHED TRUST\b',
             r'\bHERITAGE TRUST\b',
             r'\bTRUST FOR PUBLIC LAND\b',
@@ -506,7 +674,10 @@ def classify_owner(
 
 
 
-        rel_key_words_local = rel_key_words + [
+        rel_key_words_local = [
+            kw for kw in rel_key_words
+            if kw.strip().lower() != "temple"
+        ] + [
             r'\bCHURCH OF\b',
             r'\bOF .* CHURCH\b',
             r'\bCHURCH AT\b',
@@ -519,6 +690,17 @@ def classify_owner(
             r'\bBIBLE CHURCH\b',
             r'\bMISSIONARY CHURCH\b',
             r'\bCHAPEL\b',
+            r'\bTEMPLE CHURCH\b',
+            r'\bFAITH TEMPLE\b',
+            r'\bBETHLEHEM TEMPLE\b',
+            r'\bMASONIC TEMPLE\b',
+            r'\bBUDDHIST TEMPLE\b',
+            r'\bHOLY TEMPLE\b',
+            r'\bMIRACLE TEMPLE\b',
+            r'\bTRINITY TEMPLE\b',
+            r'\bTEMPLE ASSOCIATION\b',
+            r'\bTEMPLE ASSN\b',
+            r'\bTEMPLE\b.*\bMISSION\b',
         ]
 
         is_religious_simple, _ = get_corp(simple_owner, rel_key_words_local)
@@ -553,7 +735,6 @@ def classify_owner(
             r'\bHOMEOWNER(S)? ASSOCIATION\b',
             r'\bSPORTSMAN(S)? CLUB\b',
             r'\bASSOCIATION\b',
-            r'\bCLUB\b',
             r'\bFRIENDS OF\b',
             r'\bYMCA\b',
             r'\bYWCA\b',
@@ -584,7 +765,6 @@ def classify_owner(
             r'\bBLOOD CENTER\b',
             r'\bBLOOD CTRS?\b',
             r'\bHOMEOWNERS\b',
-            r'\bHOUSING AUTHORITY\b'
         ]
 
         is_43_simple, _ = get_corp(simple_owner, kw43_local)
@@ -653,9 +833,7 @@ def classify_owner(
 
         corp_filter = (
             create_regex_pattern_from_literals(
-                corp_keywords
-                + ckw
-                + [
+                corp_keywords + ckw + [
                     "COMPANY",
                     "INSURANCE",
                     "BANK",
@@ -665,13 +843,18 @@ def classify_owner(
                     "ASSOCIATION",
                     "COOPERATIVE",
                     "MERGENTHALER",
-                    "HOUSING AUTHORITY",
-                    "AFRAME PIPE",
                 ]
             )
-            + "|"
             + create_regex_pattern_from_raw(acronym_regex_variants(corp_acronyms))
         )
+
+        extra_patterns = [
+            r"\bREAL ESTATE\b",
+            r"\bHOUSING AUTHORITY\b",
+            r"\bAFRAME PIPE\b",
+        ]
+
+        corp_filter += "|" + "|".join(extra_patterns)
 
         trace.add(
             "21_build_corp_filter",
@@ -753,8 +936,6 @@ def classify_owner(
             "village of",
             "the city of",
             "the town of",
-            "city",
-            "town",
             "municipal",
             "school district",
         ]
@@ -803,7 +984,10 @@ def classify_owner(
                     r"\bU\.?S\.?A?\b",
                     r"\bU\s*\.?\s*S\s*\.?\s*A?\s*\.?\b",
                     r"\bFEDERAL\b",
-                    r"\bCONSERVATION\b",
+                    r"\bCONSERVATION DISTRICT\b",
+                    r"\bSOIL CONSERVATION\b",
+                    r"\bCONSERVATION AUTHORITY\b",
+                    r"\bCONSERVATION COMMISSION\b",
                     r"\bGOVT\b",
                     r"\bDEPARTMENT OF (AGRICULTURE|INTERIOR|DEFENSE|ENERGY|EDUCATION|TRANSPORTATION|JUSTICE|LABOR|COMMERCE)\b",
                     r"\bBUREAU OF\b",
@@ -838,6 +1022,15 @@ def classify_owner(
                     r"\bREGIONAL DISTRICT\b",
                     r"\bWATER DISTRICT\b",
                     r"\bUTILITY DISTRICT\b",
+                    r'\bCITY\b',
+                    r'\bTOWN\b',
+                    r'\bVILLAGE\b',
+                    r'\bCOUNTY\b',
+                    r'\bPARISH\b',
+                    r'\bBOROUGH\b',
+                    r"\bCOMMISSIONER(S)?\b",
+                    r"\bBOARD OF .* COMMISSIONERS\b",
+                    r"\bBOARD .* COMMISSIONERS\b",
                 ]
             )
         )
@@ -902,7 +1095,11 @@ def classify_owner(
             r"\bREALTY\b",
             r"\bCAPITAL\b",
             r"\bVENTURES?\b",
-            r"\bDEVELOPMENT\b",
+            r"\bLOAN\b",
+            r"\bSAVINGS?\b",
+            r"\bCREDIT UNION\b",
+            r"\bBANK\b",
+            r"\bREAL ESTATE\b",
         ]
 
         corp_override_regex = re.compile("|".join(corp_override_patterns), re.IGNORECASE)
@@ -910,7 +1107,10 @@ def classify_owner(
         corp_like_gov = False
 
         if is_government:
-            corp_like_gov = corp_override_regex.search(own1) is not None
+            corp_like_gov = any(
+                corp_override_regex.search(text or "") is not None
+                for text in (simple_owner, own1, own2)
+            )
 
         trace.add(
             "29_corp_like_gov_check",
@@ -969,7 +1169,7 @@ def classify_owner(
         # Final corp-like gov safety check
         # -------------------------
 
-        corp_like_gov_final = corp_override_regex.search(own1) is not None
+        corp_like_gov_final = corp_like_gov
 
         trace.add(
             "34_corp_like_gov_final_check",
@@ -989,7 +1189,7 @@ def classify_owner(
             misclassified_corp = False
         else:
             confirmed_gov = False
-            misclassified_corp = True
+            misclassified_corp = is_government and corp_like_gov_final
 
         trace.add(
             "35_gov_split",
@@ -1056,6 +1256,31 @@ def classify_owner(
             # -------------------------
 
             if initial_class == 1:
+
+                # --- NEW: corp override inside family ---
+                is_corp = re.search(corp_filter, simple_owner, re.IGNORECASE) is not None
+
+                trace.add(
+                    "40_family_corp_override_check",
+                    "check",
+                    rule="corp_filter",
+                    simple_owner=simple_owner,
+                    result=is_corp,
+                )
+
+                if is_corp:
+                    Own_Type = 41
+
+                    trace.add(
+                        "40_family_overridden_to_corp",
+                        "assign",
+                        own_type=41,
+                        reason="corp_filter_match_overrides_family",
+                    )
+
+                    return Own_Type, trace
+
+                # --- existing behavior ---
                 Own_Type = 45
 
                 trace.add(
@@ -1205,6 +1430,8 @@ def classify_owner(
     # Government subclassification entry
     # -------------------------
 
+    trace.add("DEBUG_state_input", "state", state_name=state_name)
+
     trace.add(
         "53_pre_gov_subclassify",
         "state",
@@ -1224,7 +1451,10 @@ def classify_owner(
         r"\bFEDERAL\b",
         r"\bGOVT\b",
         r"\bDEPARTMENT OF (AGRICULTURE|INTERIOR|DEFENSE|ENERGY|EDUCATION|JUSTICE|LABOR|COMMERCE)\b",
-        r"\bBUREAU OF\b",
+        r'\bBUREAU OF LAND MANAGEMENT\b',
+        r'\bBUREAU OF INDIAN AFFAIRS\b',
+        r'\bBUREAU OF RECLAMATION\b',
+        r'\bBUREAU OF PRISONS\b',
         r"\bUSDA\b",
         r"\bFOREST SERVICE\b",
         r"\bEPA\b",
@@ -1254,7 +1484,9 @@ def classify_owner(
         "54_fed_gov_check",
         "check",
         rule="federal_keywords",
-        keyword=kw,
+        keyword=kw["keyword"] if kw else None,
+        match=kw["match"] if kw else None,
+        source=kw["source"] if kw else None,
         result=fed_match,
     )
 
@@ -1342,7 +1574,7 @@ def classify_owner(
     # Step 3: State government
     # -------------------------
 
-    state_name = (state_name or "").upper()
+    state_name = (state_name or "").strip().upper()
 
     state_keywords = [
         r"\bSTATE\b.*\b(DEPARTMENT|DEPT|UNIVERSITY|COLLEGE|OFFICE|AGENCY|AUTHORITY|SCHOOL|EDUCATION|COMMISSION)\b",
@@ -1357,16 +1589,49 @@ def classify_owner(
         r"\bDEPARTMENT OF (TRANSPORTATION)\b",
     ]
 
-    # If state context exists (legacy behavior)
-    if state_name:
-        state_keywords.append(flipped_us_state[state_name].upper())
-        state_keywords.append(state_name)
+    # -------------------------
+    # Normalize state context (MATCH PRODUCTION INTENT)
+    # -------------------------
 
-    # If no state context (single-string classifier)
+    state_full = None
+    state_abbrev = None
+
+    if state_name:
+        if len(state_name) == 2 and state_name in flipped_us_state:
+            # input is abbreviation (VA → VIRGINIA)
+            state_abbrev = state_name
+            state_full = flipped_us_state[state_name].upper()
+        else:
+            # input is full name (VIRGINIA)
+            state_full = state_name
+
+            # reverse lookup abbreviation
+            for abbr, full in flipped_us_state.items():
+                if full.upper() == state_name:
+                    state_abbrev = abbr
+                    break
+
+        # -------------------------
+        # Add BOTH forms (SAFE, BOUNDED)
+        # -------------------------
+
+        if state_full:
+            state_keywords.append(rf"\b{state_full}\b")
+
+        if state_abbrev:
+            state_keywords.append(rf"\b{state_abbrev}\b")
+
+    # -------------------------
+    # No state context (fallback behavior)
+    # -------------------------
+
     else:
         state_keywords.extend([rf"\b{s.upper()}\b" for s in us_state_to_abbrev.keys()])
         state_keywords.extend([rf"\b{abbr}\b" for abbr in us_state_to_abbrev.values()])
 
+    # -------------------------
+    # Run match
+    # -------------------------
 
     state_match, kw = get_gov_row(own1, own2, state_keywords)
 
