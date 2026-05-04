@@ -1,0 +1,22 @@
+test_case_id,scenario,CN,STATECD_NWOS,NWOS_STUDY,FIRST_LABEL_LINE,LAST_NM,ADDRESS1,CITY,STATEAB,ZIP_CD,expected_group,expected_address_group
+1,exact duplicate,1001,8,1,John Smith,Smith,101 Main St,Denver,CO,80202,G01,A01
+2,comma inversion same address,1002,8,1,"Smith, John",Smith,101 Main St,Denver,CO,80202,G01,A01
+3,middle initial removed,1003,8,1,John Q Smith,Smith,101 Main St,Denver,CO,80202,G01,A01
+4,same name different address,1004,8,1,John Smith,Smith,202 Oak Ave,Denver,CO,80203,G01,A02
+5,suffix stripped LLC,1005,41,1,Acme Timber LLC,Timber,500 Mill Rd,Bend,OR,97701,G02,A03
+6,suffix stripped INC,1006,41,1,Acme Timber Inc,Timber,500 Mill Rd,Bend,OR,97701,G02,A03
+7,no business suffix different address,1007,41,1,Acme Timber,Timber,700 Mill Rd,Bend,OR,97701,G02,A04
+8,abbreviation expansion not merged,1008,16,1,Wm Carter,Carter,12 Pine St,Boise,ID,83702,G03,A05
+9,full given name stays distinct,1009,16,1,William Carter,Carter,12 Pine St,Boise,ID,83702,G19,A06
+10,title removal,1010,53,1,Dr. Emily Stone,Stone,9 Lake View,Seattle,WA,98101,G05,A07
+11,plain name,1011,53,1,Emily Stone,Stone,9 Lake View,Seattle,WA,98101,G05,A07
+12,unicode normalization,1012,35,1,José Garcia,Garcia,44 Orchard Rd,Santa Fe,NM,87501,G06,A08
+13,ascii normalization,1013,35,1,Jose Garcia,Garcia,44 Orchard Rd,Santa Fe,NM,87501,G06,A08
+14,punctuation normalization,1014,48,1,O'Neil Family Trust,Oneil,1 Ranch Rd,Austin,TX,78701,G07,A09
+15,punctuation removed variant different address,1015,48,1,Oneil Family Trust,Oneil,2 Ranch Rd,Austin,TX,78701,G07,A10
+16,blank owner unique one,1016,35,1,,Unknown,1 Null St,Nowhere,NM,87001,G08,A11
+17,blank owner unique two,1017,35,1,,Unknown,1 Null St,Nowhere,NM,87001,G09,A12
+18,estate inversion,1018,8,1,Estate of John Smith,Smith,101 Main St,Denver,CO,80202,G14,A13
+19,estate inversion variant,1019,8,1,John Smith Estate,Smith,101 Main St,Denver,CO,80202,G14,A13
+20,comma suffix inversion,1020,40,1,"Smith, John Jr",Smith,8 Cedar Ln,Tulsa,OK,74103,G18,A14
+21,forward suffix variant,1021,40,1,John Jr Smith,Smith,8 Cedar Ln,Tulsa,OK,74103,G18,A14

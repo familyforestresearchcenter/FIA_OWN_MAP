@@ -1,0 +1,163 @@
+from pathlib import Path
+
+import pandas as pd
+
+
+_THIS_DIR = Path(__file__).resolve().parent
+DATA_DIR = _THIS_DIR / "data"
+NAME_EXPAND_PATH = DATA_DIR / "Common_Name_Abbreviations.csv"
+
+
+NameCleaner = [
+    "TTEE",
+    "DR. ",
+    "MR. ",
+    "MS. ",
+    " MRS. ",
+    "CAPTAIN",
+    "CPT.",
+    "PROF ",
+    "REV. COACH ",
+    "PROFESSOR ",
+    "REVEREND ",
+    "SIR ",
+    "LT. ",
+    "SGT. ",
+    "SR. ",
+    "Miss",
+]
+
+
+biz_word_drop = [
+    " CORP",
+    " LLC",
+    " INC",
+    " LTD",
+    " HRS",
+    "MGT",
+    " OF ",
+    " CO ",
+    " LP",
+    " MGMT",
+    " STE ",
+    " L L C",
+    " L P",
+    "Holdings",
+    "Partners",
+]
+
+
+keywords = [
+    " BANK ",
+    " CORP",
+    " LLC",
+    " INC",
+    " LTD",
+    " HRS",
+    "MGT",
+    "CORPORATION",
+    "PARTICIPATION",
+    " TRUST",
+    " TRUS",
+    " OF ",
+    " CO ",
+    " LP",
+    "UNIVERSITY",
+    "COLLEGE",
+    " CHURCH",
+    "STATE",
+    " CLUB",
+    "BAPTISI",
+    "EVANGELICAL",
+    "METHODIST",
+    "CATHOLIC",
+    "PROPERTIES",
+    "ASSOCIATIONS",
+    "ASSOCIATES",
+    " TOWN OF",
+    "CITY OF",
+    " ASSOCI",
+    "SOCIETY",
+    "MAINTENANCE",
+    "MAINTENANC",
+    " COUNTY",
+    "TELEPHONE",
+    "ELECTRIC",
+    "ENTERPRISES",
+    "ENTERPRISE",
+    "AUTHORITY",
+    "HOMEOWNERS",
+    "INTERNATIONAL",
+    " MINISTRY",
+    " OFFICE",
+    "INVESTMENT",
+    " HOME",
+    " MGMT",
+    " PRESBYTERIAN",
+    " INN",
+    "ASSOCIATION",
+    " STE ",
+    " L L C",
+    "ACCOUNTING",
+    "MAINTEN",
+    "PRODUCT",
+    "MUTUAL",
+    "ESTATES",
+    "PARTNER",
+    " & SONS",
+    "FINANCE",
+    " TITLE",
+    " L P",
+    " FARM",
+    "WIRELESS",
+    "COMMUNICATION",
+    " SERVICE",
+    "BAR & GRILL",
+    " DEPT",
+    "DEPARTMENT",
+    " CTR",
+    " LOAN",
+    "SPECIALTIES",
+    "BRANDS",
+    " UNITED",
+    "CREDIT",
+    " UNION",
+    "CORPORATE",
+    "TREASURER",
+    " ADMIN",
+    "UTILITIES",
+    "COMMERCIAL",
+    " STORAGE",
+    "FAMILY",
+    "AND SONS",
+]
+
+
+junior_keywords = [
+    " JR ",
+    " JR. ",
+    " Jr ",
+    " Jr. ",
+    " jr ",
+    " jr. ",
+    " JR",
+    " JR.",
+    " Jr",
+    " Jr.",
+    " jr",
+    " jr.",
+    " II ",
+    " III ",
+    " IV ",
+]
+
+
+NamesExpander = pd.read_csv(
+    NAME_EXPAND_PATH,
+    index_col=0,
+    names=["Full"],
+).to_dict()["Full"]
+
+NamesExpander.update({
+    r"\bCTY\b": "COUNTY",
+})
